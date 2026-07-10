@@ -9,29 +9,29 @@ export const signup = async (req, res, next) => {
   try {
     const validationResult = signupSchema.safeParse(req.body);
     if (!validationResult.success) {
-      const errorMessages = validationResult.error.errors.map(
+      const errorMessages = validationResult.error.issues.map(
         (err) => err.message,
       );
       throw ApiError.badRequest(errorMessages.join(", "));
     }
 
-    const { name, email, password } = validationResult.data;
+    const { username, email, password } = validationResult.data;
     const existingUser = await User.findUserByEmail(email);
     if (existingUser) {
       throw ApiError.badRequest("User with this email already exists");
     }
 
-    const newUser = await User.createUser({ name, email, password });
+    const newUser = await User.createUser({ username, email, password });
     const token = jwtToken.sign({
       id: newUser.id,
       email: newUser.email,
-      name: newUser.name,
+      username: newUser.username,
     });
     res.status(201).json({
       message: "User created successfully",
       user: {
         id: newUser.id,
-        name: newUser.name,
+        username: newUser.username,
         email: newUser.email,
       },
       token,
@@ -45,7 +45,7 @@ export const signin = async (req, res, next) => {
   try {
     const validationResult = signinSchema.safeParse(req.body);
     if (!validationResult.success) {
-      const errorMessages = validationResult.error.errors.map(
+      const errorMessages = validationResult.error.issues.map(
         (err) => err.message,
       );
       throw ApiError.badRequest(errorMessages.join(", "));
@@ -65,14 +65,14 @@ export const signin = async (req, res, next) => {
     const token = jwtToken.sign({
       id: user.id,
       email: user.email,
-      name: user.name,
+      username: user.username,
     });
 
     res.json({
       message: "Signin successful",
       user: {
         id: user.id,
-        name: user.name,
+        username: user.username,
         email: user.email,
       },
       token,

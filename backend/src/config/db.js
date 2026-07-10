@@ -3,7 +3,7 @@ import { ENV } from "./env.js";
 
 const { Pool } = pkg;
 
-const pool = new Pool({
+export const pool = new Pool({
   connectionString: ENV.DATABASE_URL,
   ssl:
     ENV.NODE_ENV === "production"
@@ -23,9 +23,9 @@ pool.on("error", (err) => {
   process.exit(-1);
 });
 
-const query = (text, params) => pool.query(text, params);
+export const query = (text, params) => pool.query(text, params);
 
-const withTransaction = async (callback) => {
+export const withTransaction = async (callback) => {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -39,5 +39,3 @@ const withTransaction = async (callback) => {
     client.release();
   }
 };
-
-export default { pool, query, withTransaction };
