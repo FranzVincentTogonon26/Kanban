@@ -40,4 +40,4 @@ const withTransaction = async (callback) => {
   }
 };
 
-export { pool, query, withTransaction };
+export default { pool, query, withTransaction };
