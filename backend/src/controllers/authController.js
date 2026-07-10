@@ -53,11 +53,12 @@ export const signin = async (req, res, next) => {
 
     const { email, password } = validationResult.data;
     const user = await User.findUserByEmail(email);
+
     if (!user) {
       throw ApiError.unauthorized("Invalid email or password");
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
       throw ApiError.unauthorized("Invalid email or password");
     }
@@ -69,7 +70,7 @@ export const signin = async (req, res, next) => {
     });
 
     res.json({
-      message: "Signin successful",
+      message: "SignIn successfully..",
       user: {
         id: user.id,
         name: user.name,
