@@ -1,5 +1,5 @@
 import pkg from "pg";
-import { ENV } from "../config.js";
+import { ENV } from "./env.js";
 
 const { Pool } = pkg;
 
@@ -37,8 +37,4 @@ const withTransaction = async (callback) => {
   }
 };
 
-module.exports = {
-  pool,
-  query,
-  withTransaction,
-};
+export { pool, query, withTransaction };
