@@ -9,7 +9,7 @@ export const signup = async (req, res, next) => {
   try {
     const validationResult = signupSchema.safeParse(req.body);
     if (!validationResult.success) {
-      const errorMessages = validationResult.error.errors.map(
+      const errorMessages = validationResult.error.issues.map(
         (err) => err.message,
       );
       throw ApiError.badRequest(errorMessages.join(", "));
@@ -18,7 +18,7 @@ export const signup = async (req, res, next) => {
     const { name, email, password } = validationResult.data;
     const existingUser = await User.findUserByEmail(email);
     if (existingUser) {
-      throw ApiError.badRequest("User with this email already exists");
+      throw ApiError.conflict("User with this email already exists");
     }
 
     const newUser = await User.createUser({ name, email, password });
@@ -45,7 +45,7 @@ export const signin = async (req, res, next) => {
   try {
     const validationResult = signinSchema.safeParse(req.body);
     if (!validationResult.success) {
-      const errorMessages = validationResult.error.errors.map(
+      const errorMessages = validationResult.error.issues.map(
         (err) => err.message,
       );
       throw ApiError.badRequest(errorMessages.join(", "));
