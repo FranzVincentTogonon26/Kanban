@@ -3,7 +3,7 @@ import cors from "cors";
 
 import { ENV } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
-import { apiRouter } from "./routes/index.js";
+import apiRouter from "./routes/index.js";
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
     status: "running",
     version: "1.0.0",
   });
-});
+}); 
 
 app.use("/api", apiRouter);
 
