@@ -1,6 +1,13 @@
 import dotenv from "dotenv";
 dotenv.config({ quiet: true });
 
+const required = ["DATABASE_URL", "JWT_SECRET"];
+for (const key of required) {
+  if (!process.env[key]) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+}
+
 export const ENV = {
   PORT: process.env.PORT || 3000,
   NODE_ENV: process.env.NODE_ENV,

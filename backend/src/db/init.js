@@ -21,6 +21,7 @@ const __dirname = path.dirname(__filename);
     console.log("Schema applied successfully");
   } catch (err) {
     console.error("Error applying schema:", err.message);
+    process.exitCode = 1;
   } finally {
     await pool.end();
   }

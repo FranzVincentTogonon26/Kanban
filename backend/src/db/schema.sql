@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     due_date        TIMESTAMPTZ,
     assigned_id     UUID REFERENCES users(id) ON DELETE SET NULL,
     position        DOUBLE PRECISION NOT NULL DEFAULT 1000,
-    created_by      UUID NOT NULL REFERENCES users(id) ON DELETE SET NULL,
+    created_by      UUID REFERENCES users(id) ON DELETE SET NULL,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

@@ -5,7 +5,10 @@ const { Pool } = pkg;
 
 const pool = new Pool({
   connectionString: ENV.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
+  ssl:
+    ENV.NODE_ENV === "production"
+      ? { rejectUnauthorized: true }
+      : { rejectUnauthorized: false },
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
