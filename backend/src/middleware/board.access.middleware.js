@@ -1,4 +1,4 @@
-import Board from "../models/board.models.js";
+import Board from "../models/board.model.js";
 import ApiError from "../utils/ApiError.js";
 
 const requireBoardAccess = async (req, res, next) => {

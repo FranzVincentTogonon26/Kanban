@@ -61,6 +61,8 @@ class Board {
 
       return b;
     });
+
+    return result;
   }
 
   // Get board by id
@@ -79,7 +81,7 @@ class Board {
          FROM tasks t
          LEFT JOIN users a ON a.id = t.assignee_id
          WHERE t.board_id = $1
-         ORDER BY t.postion ASC`,
+         ORDER BY t.position ASC`,
         [boardId],
       ),
       query(
@@ -94,7 +96,7 @@ class Board {
   // Update Board
   static async updateBoard(userId, title, description, color) {
     const result = await query(
-      `SELECT boards
+      `UPDATE boards
           SET title = COALESCE($2, title),
               description = COALESCE($3, description),
               color = COALESCE($4, color),

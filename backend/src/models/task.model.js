@@ -48,7 +48,7 @@ class Task {
     if (q) {
       params.push(`%${q}%`);
       filters.push(
-        `t.title ILIKE $${params.length} OR t.description ILIKE $${params.length}     `,
+        `(t.title ILIKE $${params.length} OR t.description ILIKE $${params.length})`,
       );
     }
 
@@ -56,7 +56,7 @@ class Task {
       `SELECT t.*,
                 a.name AS assignee_name,
                 a.email AS assignee_email,
-                a.avatart AS assignee_avatar
+                a.avatar_url AS assignee_avatar
          FROM tasks t
          LEFT JOIN users a ON a.id = t.assignee_id
          WHERE ${filters.join(" AND ")}
@@ -64,7 +64,7 @@ class Task {
       params,
     );
 
-    return result.rows[0];
+    return result.rows;
   }
 
   // Create task
@@ -153,7 +153,7 @@ class Task {
       `UPDATE tasks
             SET column_id    = $3,
                 position     = $4,
-                updated_at   = now(),
+                updated_at   = now()
          WHERE id = $1 AND board_id = $2
          RETURNING id`,
       [taskId, boardId, column_id, position],

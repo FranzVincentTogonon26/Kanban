@@ -124,7 +124,15 @@ const addMember = async (req, res, next) => {
       metadata: { memberId: user.id },
     });
 
-    res.status(201).json({ member: { ...user, role } });
+    res.status(201).json({
+      member: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatar_url: user.avatar_url,
+        role,
+      },
+    });
   } catch (err) {
     next(err);
   }

@@ -89,9 +89,9 @@ const updateTask = async (req, res, next) => {
       assignee_id,
     );
 
-    if (!task.length) throw ApiError.notFound("Task not found..");
+    if (!updateTask) throw ApiError.notFound("Task not found..");
 
-    const task = await fetchTask(updateTask.id);
+    const task = await Task.fetchTask(updateTask.id);
     emitToBoard(req.board.id, "task:updated", task);
     res.json({ task });
   } catch (err) {

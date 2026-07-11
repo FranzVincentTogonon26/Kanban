@@ -33,11 +33,11 @@ class Column {
   //   Delete column
   static async deleteColumn(columnId, boardId) {
     const result = await query(
-      "DELETE FROM columns WHERE id = $1 AND board_id = $2",
+      "DELETE FROM columns WHERE id = $1 AND board_id = $2 RETURNING *",
       [columnId, boardId],
     );
 
-    return result.rows[0];
+    return result.rows;
   }
 }
 
