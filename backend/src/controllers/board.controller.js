@@ -1,13 +1,13 @@
 import Activity from "../models/activity.model.js";
 import Board from "../models/board.model.js";
 import User from "../models/user.model.js";
-import { emitToBoard, logActivity } from "../realtime.js";
+import { emitToBoard, logActivity } from "../realtime";
 import ApiError from "../utils/ApiError.js";
 import { memberSchema } from "../validations/activity.validation.js";
 
 const DEFAULT_COLUMNS = ["Todo", "In Progress", "Review", "Done"];
 
-const listBoards = async (req, res, next) => {
+export const listBoards = async (req, res, next) => {
   try {
     const boardList = await Board.listBoards(req.user.id);
     res.json({ boards: boardList });
@@ -16,7 +16,7 @@ const listBoards = async (req, res, next) => {
   }
 };
 
-const createBoard = async (req, res, next) => {
+export const createBoard = async (req, res, next) => {
   try {
     const title = (req.body.title || "").trim();
     const description = (req.body.description || "").trim() || null;
@@ -37,7 +37,7 @@ const createBoard = async (req, res, next) => {
   }
 };
 
-const getBoard = async (req, res, next) => {
+export const getBoard = async (req, res, next) => {
   try {
     const boardId = req.board.id;
 
@@ -56,7 +56,7 @@ const getBoard = async (req, res, next) => {
   }
 };
 
-const updateBoard = async (req, res, next) => {
+export const updateBoard = async (req, res, next) => {
   try {
     const { title, description, color } = req.body;
 
@@ -74,7 +74,7 @@ const updateBoard = async (req, res, next) => {
   }
 };
 
-const deleteBoard = async (req, res, next) => {
+export const deleteBoard = async (req, res, next) => {
   try {
     if (req.board.role !== "owner")
       throw ApiError.forbidden("Only the owner can delete this board");
@@ -86,7 +86,7 @@ const deleteBoard = async (req, res, next) => {
   }
 };
 
-const getActivity = async (req, res, next) => {
+export const getActivity = async (req, res, next) => {
   try {
     const limit = Math.min(parseInt(req.query.limit, 10) || 30, 100);
     const activities = await Activity.getActivity(req.board.id, limit);
@@ -96,7 +96,7 @@ const getActivity = async (req, res, next) => {
   }
 };
 
-const addMember = async (req, res, next) => {
+export const addMember = async (req, res, next) => {
   try {
     if (req.board.role !== "owner" || req.board.role !== "admin")
       throw ApiError.forbidden("Only owners or admin can add members");
@@ -138,7 +138,7 @@ const addMember = async (req, res, next) => {
   }
 };
 
-const removeMember = async (req, res, next) => {
+export const removeMember = async (req, res, next) => {
   try {
     if (req.board.role !== "owner" || req.board.role !== "admin")
       throw ApiError.forbidden("Only owners or admin can add members");
@@ -152,15 +152,4 @@ const removeMember = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-};
-
-export {
-  listBoards,
-  createBoard,
-  getBoard,
-  updateBoard,
-  deleteBoard,
-  getActivity,
-  addMember,
-  removeMember,
 };

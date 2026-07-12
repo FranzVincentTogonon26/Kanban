@@ -1,11 +1,11 @@
 import Task from "../models/task.model.js";
 import { addTaskSchema } from "../validations/task.validation.js";
 import ApiError from "../utils/ApiError.js";
-import { emitToBoard, logActivity } from "../realtime.js";
+import { emitToBoard, logActivity } from "../realtime";
 
 const PRIORITIES = ["low", "medium", "high", "urgent"];
 
-const listTask = async (req, res, next) => {
+export const listTask = async (req, res, next) => {
   try {
     const tasks = await Task.listTask(
       req.board.id,
@@ -21,7 +21,7 @@ const listTask = async (req, res, next) => {
   }
 };
 
-const createtask = async (req, res, next) => {
+export const createTask = async (req, res, next) => {
   try {
     const validationResult = addColumnSchema.safeParse(req.body);
     if (!validationResult.success) {
@@ -73,7 +73,7 @@ const createtask = async (req, res, next) => {
   }
 };
 
-const updateTask = async (req, res, next) => {
+export const updateTask = async (req, res, next) => {
   try {
     const { title, description, priority, due_date, assignee_id } = req.body;
     if (priority !== undefined && !PRIORITIES.includes(priority))
@@ -99,7 +99,7 @@ const updateTask = async (req, res, next) => {
   }
 };
 
-const moveTask = async (req, res, next) => {
+export const moveTask = async (req, res, next) => {
   try {
     const { column_id, position } = req.body;
     if (!column_id || position === undefined) {
@@ -139,7 +139,7 @@ const moveTask = async (req, res, next) => {
   }
 };
 
-const deleteTask = async (req, res, next) => {
+export const deleteTask = async (req, res, next) => {
   try {
     const task = await Task.deleteTask(req.params.taskId, req.board.id);
     if (!task.length) throw ApiError.notFound("Task not found");
@@ -158,5 +158,3 @@ const deleteTask = async (req, res, next) => {
     next(err);
   }
 };
-
-export { listTask, createtask, updateTask, moveTask, deleteTask };

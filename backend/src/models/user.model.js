@@ -31,6 +31,20 @@ class User {
     );
     return result.rows[0];
   }
+
+  // Search Users
+  static async searchUsers(query) {
+    const result = await query(
+      `
+      SELECT id, name, email, avatar_url
+      FROM users
+      WHERE name ILIKE $1 OR email ILIKE $1
+      ORDER BY name ASC LIMIT 10`,
+      [`%${query}%`],
+    );
+
+    return result.rows[0];
+  }
 }
 
 export default User;
