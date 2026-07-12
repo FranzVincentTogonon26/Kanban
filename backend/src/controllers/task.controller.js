@@ -1,7 +1,7 @@
 import Task from "../models/task.model.js";
 import { addTaskSchema } from "../validations/task.validation.js";
 import ApiError from "../utils/ApiError.js";
-import { emitToBoard, logActivity } from "../realtime.js";
+import { emitToBoard, logActivity } from "../realtime";
 
 const PRIORITIES = ["low", "medium", "high", "urgent"];
 

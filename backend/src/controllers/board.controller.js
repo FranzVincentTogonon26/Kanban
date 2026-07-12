@@ -1,7 +1,7 @@
 import Activity from "../models/activity.model.js";
 import Board from "../models/board.model.js";
 import User from "../models/user.model.js";
-import { emitToBoard, logActivity } from "../realtime.js";
+import { emitToBoard, logActivity } from "../realtime";
 import ApiError from "../utils/ApiError.js";
 import { memberSchema } from "../validations/activity.validation.js";
 
