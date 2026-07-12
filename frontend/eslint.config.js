@@ -17,5 +17,11 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      // Allow context providers to live alongside their consumer hook (HMR-only concern).
+      'react-refresh/only-export-components': 'warn',
+      // Synchronous setState in effects is used here for loading flags during data fetches.
+      'react-hooks/set-state-in-effect': 'off',
+    },
   },
 ])
