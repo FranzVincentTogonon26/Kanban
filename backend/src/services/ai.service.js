@@ -22,7 +22,7 @@ const extractJSON = (text) => {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
   const candidate = fenced ? fenced[1] : text;
 
-  const start = candidate.search(/[{]/);
+  const start = candidate.search(/[[{]/);
   if (start === -1) throw new ApiError(502, "AI retured an expected response");
 
   const end = Math.max(candidate.lastIndexOf("]"), candidate.lastIndexOf("}"));
@@ -110,12 +110,13 @@ const breakdownTask = async (title, description = "", count = 5) => {
 };
 
 const summarizeBoard = async ({ boardTitle, columns }) => {
-  const snapshot =
-    columns.map((c) => `${c.title} (${c.tasks.length}) : \n`) +
-    (
-      c.tasks.map((t) => ` - ${t.title} [${t.priority}]`).join("\n") ||
-      " (none)"
-    ).join("\n");
+  const snapshot = columns
+    .map((c) => {
+      const tasks =
+        c.tasks.map((t) => ` - ${t.title} [${t.priority}]`).join("\n") ||
+        " (none)";
+      return `${c.title} (${c.tasks.length}):\n${tasks}`;
+    }).join("\n");
 
   const prompt = `
     You are a scrum master. Write a concise sprint summary for the Kanban board "${boardTitle}".

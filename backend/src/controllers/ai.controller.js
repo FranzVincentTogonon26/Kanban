@@ -30,7 +30,7 @@ export const generateTask = async (req, res, next) => {
         s.title,
         s.description,
         s.priority,
-        pos,
+        ++pos,
         req.user.id,
       );
 
@@ -42,7 +42,7 @@ export const generateTask = async (req, res, next) => {
       boardId: req.board.id,
       userId: req.user.id,
       action: "ai:generated_tasks",
-      message: `${req.user.name} generated "${created.title} tasks with AI"`,
+      message: `${req.user.name} generated ${created.length} tasks with AI`,
       metadata: { goal, count: created.length },
     });
 
@@ -59,7 +59,7 @@ export const breakdownTask = async (req, res, next) => {
 
     if (req.body.taskId) {
       const task = await AI.breakdownTask(req.body.taskId, req.board.id);
-      if (!task.length) throw ApiError.notFound("Task not found..");
+      if (!task) throw ApiError.notFound("Task not found..");
       title = task.title;
       description = task.description;
     }
