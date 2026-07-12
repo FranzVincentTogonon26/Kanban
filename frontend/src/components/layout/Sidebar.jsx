@@ -1,7 +1,17 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import {
-  Plus, LayoutDashboard, Zap, CheckSquare, Calendar, Users, Settings,
-  ChevronLeft, ChevronRight, HelpCircle, LogOut, Sparkles,
+  Plus,
+  LayoutDashboard,
+  Zap,
+  CheckSquare,
+  Calendar,
+  Users,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
+  HelpCircle,
+  LogOut,
+  Sparkles,
 } from "lucide-react";
 import { useBoards } from "../../context/BoardsContext";
 import { useAuth } from "../../context/AuthContext";
@@ -29,7 +39,7 @@ const NavItem = ({ to, icon: Icon, label, collapsed, badge }) => (
         collapsed ? "mx-auto w-11 justify-center" : "gap-3 px-3",
         isActive
           ? "bg-brand-50 font-semibold text-brand-700"
-          : "text-muted hover:bg-surface-2 hover:text-ink"
+          : "text-muted hover:bg-surface-2 hover:text-ink",
       )
     }
   >
@@ -59,7 +69,7 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard, onCommand }) => {
     <aside
       className={cn(
         "fixed inset-y-3 left-3 z-40 hidden flex-col overflow-hidden rounded-3xl border border-line bg-surface/90 shadow-soft backdrop-blur-xl transition-[width] duration-300 ease-[var(--ease-spring)] md:flex",
-        collapsed ? "w-[72px]" : "w-[252px]"
+        collapsed ? "w-[72px]" : "w-[252px]",
       )}
     >
       {/* Header */}
@@ -98,16 +108,38 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard, onCommand }) => {
       {/* Menu */}
       <SectionLabel collapsed={collapsed}>Menu</SectionLabel>
       <nav className="space-y-1 px-3">
-        <NavItem to="/dashboard" icon={LayoutDashboard} label="Dashboard" collapsed={collapsed} />
-        <NavItem to="/my-tasks" icon={CheckSquare} label="My Tasks" collapsed={collapsed} />
-        <NavItem to="/calendar" icon={Calendar} label="Calendar" collapsed={collapsed} />
+        <NavItem
+          to="/dashboard"
+          icon={LayoutDashboard}
+          label="Dashboard"
+          collapsed={collapsed}
+        />
+        <NavItem
+          to="/my-tasks"
+          icon={CheckSquare}
+          label="My Tasks"
+          collapsed={collapsed}
+        />
+        <NavItem
+          to="/calendar"
+          icon={Calendar}
+          label="Calendar"
+          collapsed={collapsed}
+        />
         <NavItem to="/team" icon={Users} label="Team" collapsed={collapsed} />
       </nav>
 
       {/* Boards */}
-      <div className={cn("mt-2 flex h-7 items-center", collapsed ? "justify-center" : "justify-between px-4")}>
+      <div
+        className={cn(
+          "mt-2 flex h-7 items-center",
+          collapsed ? "justify-center" : "justify-between px-4",
+        )}
+      >
         {!collapsed && (
-          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">Boards</span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">
+            Boards
+          </span>
         )}
         <button
           onClick={onCreateBoard}
@@ -119,77 +151,103 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard, onCommand }) => {
       </div>
 
       <div className="mt-1 flex-1 space-y-0.5 overflow-y-auto overflow-x-hidden px-3 pb-2 no-scrollbar">
-        {loading ? (
-          Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className={cn("flex h-10 items-center gap-3", collapsed ? "justify-center" : "px-1")}>
-              <div className="skeleton h-7 w-7 shrink-0 rounded-lg" />
-              {!collapsed && <div className="skeleton h-3 flex-1 rounded" />}
-            </div>
-          ))
-        ) : boards.length === 0 ? (
-          !collapsed && <p className="px-3 py-2 text-xs text-faint">No boards yet</p>
-        ) : (
-          boards.map((b) => {
-            const color = b.color || "#2f8159";
-            return (
-              <NavLink
-                key={b.id}
-                to={`/board/${b.id}`}
-                title={b.title}
-                className={({ isActive }) =>
-                  cn(
-                    "flex h-10 items-center rounded-2xl text-sm transition-colors duration-200",
-                    collapsed ? "mx-auto w-10 justify-center" : "gap-3 px-2",
-                    isActive ? "bg-brand-50 font-medium text-brand-700" : "text-muted hover:bg-surface-2 hover:text-ink"
-                  )
-                }
-              >
-                <span
-                  className="grid h-7 w-7 shrink-0 place-items-center rounded-lg font-display text-[12px] font-bold"
-                  style={{ backgroundColor: `${color}22`, color }}
-                >
-                  {b.title?.[0]?.toUpperCase() || "B"}
-                </span>
-                {!collapsed && <span className="flex-1 truncate">{b.title}</span>}
-                {!collapsed && (
-                  <span className="shrink-0 pr-1 text-[10px] font-medium tabular text-faint">{b.task_count}</span>
+        {loading
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className={cn(
+                  "flex h-10 items-center gap-3",
+                  collapsed ? "justify-center" : "px-1",
                 )}
-              </NavLink>
-            );
-          })
-        )}
+              >
+                <div className="skeleton h-7 w-7 shrink-0 rounded-lg" />
+                {!collapsed && <div className="skeleton h-3 flex-1 rounded" />}
+              </div>
+            ))
+          : boards.length === 0
+            ? !collapsed && (
+                <p className="px-3 py-2 text-xs text-faint">No boards yet</p>
+              )
+            : boards.map((b) => {
+                const color = b.color || "#2f8159";
+                return (
+                  <NavLink
+                    key={b.id}
+                    to={`/board/${b.id}`}
+                    title={b.title}
+                    className={({ isActive }) =>
+                      cn(
+                        "flex h-10 items-center rounded-2xl text-sm transition-colors duration-200",
+                        collapsed
+                          ? "mx-auto w-10 justify-center"
+                          : "gap-3 px-2",
+                        isActive
+                          ? "bg-brand-50 font-medium text-brand-700"
+                          : "text-muted hover:bg-surface-2 hover:text-ink",
+                      )
+                    }
+                  >
+                    <span
+                      className="grid h-7 w-7 shrink-0 place-items-center rounded-lg font-display text-[12px] font-bold"
+                      style={{ backgroundColor: `${color}22`, color }}
+                    >
+                      {b.title?.[0]?.toUpperCase() || "B"}
+                    </span>
+                    {!collapsed && (
+                      <span className="flex-1 truncate">{b.title}</span>
+                    )}
+                    {!collapsed && (
+                      <span className="shrink-0 pr-1 text-[10px] font-medium tabular text-faint">
+                        {b.task_count}
+                      </span>
+                    )}
+                  </NavLink>
+                );
+              })}
       </div>
 
       {/* General */}
       <SectionLabel collapsed={collapsed}>General</SectionLabel>
       <nav className="space-y-1 px-3">
-        <NavItem to="/settings" icon={Settings} label="Settings" collapsed={collapsed} />
+        <NavItem
+          to="/settings"
+          icon={Settings}
+          label="Settings"
+          collapsed={collapsed}
+        />
         <button
           onClick={onCommand}
           title={collapsed ? "Search & shortcuts" : undefined}
           className={cn(
             "group flex h-11 w-full items-center rounded-2xl text-sm font-medium text-muted transition-colors duration-200 hover:bg-surface-2 hover:text-ink",
-            collapsed ? "mx-auto w-11 justify-center" : "gap-3 px-3"
+            collapsed ? "mx-auto w-11 justify-center" : "gap-3 px-3",
           )}
         >
           <HelpCircle className="h-5 w-5 shrink-0" />
-          {!collapsed && <span className="flex-1 truncate text-left">Help & search</span>}
+          {!collapsed && (
+            <span className="flex-1 truncate text-left">Help & search</span>
+          )}
         </button>
         <button
-          onClick={() => { logout(); navigate("/login"); }}
+          onClick={() => {
+            logout();
+            navigate("/login");
+          }}
           title={collapsed ? "Log out" : undefined}
           className={cn(
             "group flex h-11 w-full items-center rounded-2xl text-sm font-medium text-muted transition-colors duration-200 hover:bg-priority-urgent/10 hover:text-priority-urgent",
-            collapsed ? "mx-auto w-11 justify-center" : "gap-3 px-3"
+            collapsed ? "mx-auto w-11 justify-center" : "gap-3 px-3",
           )}
         >
           <LogOut className="h-5 w-5 shrink-0" />
-          {!collapsed && <span className="flex-1 truncate text-left">Log out</span>}
+          {!collapsed && (
+            <span className="flex-1 truncate text-left">Log out</span>
+          )}
         </button>
       </nav>
 
       {/* Promo (expanded only) */}
-      {!collapsed && (
+      {/* {!collapsed && (
         <div className="px-3 pt-3">
           <button
             onClick={onCreateBoard}
@@ -205,15 +263,28 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard, onCommand }) => {
             </p>
           </button>
         </div>
-      )}
+      )} */}
 
       {/* User */}
       <div className="mx-3 mt-3 border-t" />
-      <div className={cn("flex h-16 items-center", collapsed ? "justify-center px-2" : "gap-3 px-3.5")}>
-        <Avatar name={user?.name} id={user?.id} src={user?.avatar_url} size="sm" className="shrink-0" />
+      <div
+        className={cn(
+          "flex h-16 items-center",
+          collapsed ? "justify-center px-2" : "gap-3 px-3.5",
+        )}
+      >
+        <Avatar
+          name={user?.name}
+          id={user?.id}
+          src={user?.avatar_url}
+          size="sm"
+          className="shrink-0"
+        />
         {!collapsed && (
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-ink">{user?.name}</p>
+            <p className="truncate text-sm font-semibold text-ink">
+              {user?.name}
+            </p>
             <p className="truncate text-xs text-faint">{user?.email}</p>
           </div>
         )}
