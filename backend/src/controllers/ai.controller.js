@@ -1,7 +1,7 @@
 import ApiError from "../utils/ApiError.js";
-import Service from "../services/ai.service.js";
+import * as Service from "../services/ai.service.js";
 import AI from "../models/ai.model.js";
-import { emitToBoard, logActivity } from "../realtime";
+import { emitToBoard, logActivity } from "../realtime/index.js";
 
 export const generateTask = async (req, res, next) => {
   try {
@@ -9,7 +9,7 @@ export const generateTask = async (req, res, next) => {
     if (!goal) throw ApiError.badRequest("A project goal is required");
 
     const count = Math.min(Math.max(parseInt(req.body.count, 10) || 6, 1), 15);
-    const suggestions = await Service.generateTask(goal, count);
+    const suggestions = await Service.generateServiceTask(goal, count);
 
     if (!req.body.column_id) {
       return res.json({ tasks: suggestions, persisted: false });

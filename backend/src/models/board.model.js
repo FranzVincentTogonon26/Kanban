@@ -52,9 +52,9 @@ class Board {
         [b.id, user_id],
       );
 
-      for (let i = 0; i < DEFAULT_COLUMNS; i++) {
+      for (let i = 0; i < DEFAULT_COLUMNS.length; i++) {
         await client.query(
-          `INSERT INTO columns ( board_id, title, position ) VALUES ( $1, %2, $3 )`,
+          `INSERT INTO columns ( board_id, title, position ) VALUES ( $1, $2, $3 )`,
           [b.id, DEFAULT_COLUMNS[i], (i + 1) * 1000],
         );
       }
@@ -79,7 +79,7 @@ class Board {
             a.email AS assignee_email,
             a.avatar_url AS assignee_avatar
          FROM tasks t
-         LEFT JOIN users a ON a.id = t.assignee_id
+         LEFT JOIN users a ON a.id = t.assigned_id
          WHERE t.board_id = $1
          ORDER BY t.position ASC`,
         [boardId],

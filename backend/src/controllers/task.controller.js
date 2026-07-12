@@ -1,7 +1,7 @@
 import Task from "../models/task.model.js";
-import { addTaskSchema } from "../validations/task.validation.js";
+import { addColumnSchema } from "../validations/column.validation.js";
 import ApiError from "../utils/ApiError.js";
-import { emitToBoard, logActivity } from "../realtime";
+import { emitToBoard, logActivity } from "../realtime/index.js";
 
 const PRIORITIES = ["low", "medium", "high", "urgent"];
 
@@ -31,19 +31,16 @@ export const createTask = async (req, res, next) => {
       throw ApiError.badRequest(errorMessages.join(", "));
     }
 
-    const {
-      column_id,
-      title: rawTitle,
-      description,
-      due_date,
-      assignee_id,
-    } = validationResult.data;
+    const { title } = validationResult.data;
+    const { column_id, description, due_date, assignee_id } = req.body;
+
     const priority = PRIORITIES.includes(req.body.priority)
       ? req.body.priority
       : "medium";
 
     const ensureTask = await Task.ensureColumnInBoard(column_id, req.board.id);
-    if (!ensureTask.length)
+
+    if (!ensureTask)
       throw ApiError.badRequest("Column does not belong to this board");
 
     const newTask = await Task.createTask(

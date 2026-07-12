@@ -10,7 +10,7 @@ class Task {
                 a.email AS assignee_email,
                 a.avatar_url AS assignee_avatar
              FROM tasks t
-             LEFT JOIN users a ON a.id = t.assignee_id
+             LEFT JOIN users a ON a.id = t.assigned_id
              WHERE t.id = $1`,
       [taskId],
     );
@@ -39,7 +39,7 @@ class Task {
 
     if (assignee) {
       params.push(assignee);
-      filters.push(`t.assignee_id = $${params.length}`);
+      filters.push(`t.assigned_id = $${params.length}`);
     }
     if (column) {
       params.push(column);
@@ -84,7 +84,7 @@ class Task {
     );
 
     const result = await query(
-      `INSERT INTO tasks (board_id, column_id, title, description, priority, due_date, assignee_id, position, created_by)
+      `INSERT INTO tasks (board_id, column_id, title, description, priority, due_date, assigned_id, position, created_by)
        VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9 )
        RETURNING id`,
       [

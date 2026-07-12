@@ -36,13 +36,15 @@ const extractJSON = (text) => {
 
 const runPrompt = async (prompt) => {
   try {
-    const response = await getClient().models.generate({
+    const response = await getClient().models.generateContent({
       model: MODEL,
       contents: prompt,
     });
 
     return response.text;
   } catch (err) {
+    console.dir(err, { depth: null });
+
     if (err.isApiError) throw err;
 
     const status = err.status || err.statusCode;
@@ -77,7 +79,7 @@ const normalizeTask = (task) => ({
   priority: VALID_PRIORITIES.includes(task.priority) ? task.priority : "medium",
 });
 
-const generateTasks = async (goal, count = 6) => {
+export const generateServiceTask = async (goal, count = 6) => {
   const prompt = `
     You are a senior project manager. Break the following project goal into ${count} concrete, actionable Kanban tasks.
     
@@ -93,7 +95,7 @@ const generateTasks = async (goal, count = 6) => {
   return json.map(normalizeTask).filter((task) => task.title);
 };
 
-const breakdownTask = async (title, description = "", count = 5) => {
+export const breakdownTask = async (title, description = "", count = 5) => {
   const prompt = `
     Break the following task into ${count} smaller, sequential subtasks.
     Task title: "${title}"
@@ -109,14 +111,15 @@ const breakdownTask = async (title, description = "", count = 5) => {
   return json.map(normalizeTask).filter((task) => task.title);
 };
 
-const summarizeBoard = async ({ boardTitle, columns }) => {
+export const summarizeBoard = async ({ boardTitle, columns }) => {
   const snapshot = columns
     .map((c) => {
       const tasks =
         c.tasks.map((t) => ` - ${t.title} [${t.priority}]`).join("\n") ||
         " (none)";
       return `${c.title} (${c.tasks.length}):\n${tasks}`;
-    }).join("\n");
+    })
+    .join("\n");
 
   const prompt = `
     You are a scrum master. Write a concise sprint summary for the Kanban board "${boardTitle}".
@@ -134,5 +137,3 @@ const summarizeBoard = async ({ boardTitle, columns }) => {
 
   return extractJSON(await runPrompt(prompt));
 };
-
-export { generateTasks, breakdownTask, summarizeBoard };

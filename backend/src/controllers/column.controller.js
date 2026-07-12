@@ -1,5 +1,5 @@
 import Column from "../models/column.model.js";
-import { emitToBoard } from "../realtime";
+import { emitToBoard } from "../realtime/index.js";
 import ApiError from "../utils/ApiError.js";
 import { addColumnSchema } from "../validations/column.validation.js";
 

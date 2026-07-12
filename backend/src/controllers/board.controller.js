@@ -1,7 +1,7 @@
 import Activity from "../models/activity.model.js";
 import Board from "../models/board.model.js";
 import User from "../models/user.model.js";
-import { emitToBoard, logActivity } from "../realtime";
+import { emitToBoard, logActivity } from "../realtime/index.js";
 import ApiError from "../utils/ApiError.js";
 import { memberSchema } from "../validations/activity.validation.js";
 
@@ -29,8 +29,10 @@ export const createBoard = async (req, res, next) => {
       description,
       color,
       req.user.id,
-      DEFAULT_COLUMNS.length,
+      DEFAULT_COLUMNS,
     );
+
+    console.log("TEST LOGS", board);
     res.status(201).json({ board });
   } catch (err) {
     next(err);
@@ -45,10 +47,10 @@ export const getBoard = async (req, res, next) => {
       await Board.getBoard(boardId);
 
     res.json({
-      board: boardRes,
-      columns: columnsRes,
-      tasks: tasksRes,
-      members: membersRes,
+      board: boardRes.rows,
+      columns: columnsRes.rows,
+      tasks: tasksRes.rows,
+      members: membersRes.rows,
       role: req.board.role,
     });
   } catch (err) {
