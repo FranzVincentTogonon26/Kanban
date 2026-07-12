@@ -3,7 +3,7 @@ import Service from "../services/ai.service.js";
 import AI from "../models/ai.model.js";
 import { emitToBoard, logActivity } from "../realtime";
 
-const generateTask = async (req, res, next) => {
+export const generateTask = async (req, res, next) => {
   try {
     const goal = (req.body.goal || "").trim();
     if (!goal) throw ApiError.badRequest("A project goal is required");
@@ -52,7 +52,7 @@ const generateTask = async (req, res, next) => {
   }
 };
 
-const breakdownTask = async (req, res, next) => {
+export const breakdownTask = async (req, res, next) => {
   try {
     let { title, description } = req.body;
     const count = Math.min(Math.max(parseInt(req.body.count, 10) || 5, 1), 12);
@@ -74,7 +74,7 @@ const breakdownTask = async (req, res, next) => {
   }
 };
 
-const summarizeBoard = async (req, res, next) => {
+export const summarizeBoard = async (req, res, next) => {
   try {
     const [boardRes, colsRes, tasksRes] = await AI.summarizeBoard(req.board.id);
     const columns = colsRes.rows.map((c) => ({
@@ -92,5 +92,3 @@ const summarizeBoard = async (req, res, next) => {
     next(err);
   }
 };
-
-export { generateTask, breakdownTask, summarizeBoard };

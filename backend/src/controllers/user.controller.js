@@ -1,6 +1,6 @@
 import User from "../models/user.model";
 
-const searchUsers = async (req, res, next) => {
+export const searchUsers = async (req, res, next) => {
   try {
     const query = (req.query.q || "").trim();
     if (query.legth < 2) return res.json({ users: [] });
@@ -11,5 +11,3 @@ const searchUsers = async (req, res, next) => {
     next(err);
   }
 };
-
-export { searchUsers };

@@ -3,7 +3,7 @@ import { emitToBoard } from "../realtime";
 import ApiError from "../utils/ApiError.js";
 import { addColumnSchema } from "../validations/column.validation.js";
 
-const createColumn = async (req, res, next) => {
+export const createColumn = async (req, res, next) => {
   try {
     const validationResult = addColumnSchema.safeParse(req.body);
     if (!validationResult.success) {
@@ -23,7 +23,7 @@ const createColumn = async (req, res, next) => {
   }
 };
 
-const updateColumn = async (req, res, next) => {
+export const updateColumn = async (req, res, next) => {
   try {
     const { title, position } = req.body;
     const column = await Column.updateColumn(
@@ -41,7 +41,7 @@ const updateColumn = async (req, res, next) => {
   }
 };
 
-const deleteColumn = async (req, res, next) => {
+export const deleteColumn = async (req, res, next) => {
   try {
     const column = await Column.deleteColumn(req.params.columnId, req.board.id);
     if (!column.length) throw ApiError.notFound("Column not found");
@@ -51,5 +51,3 @@ const deleteColumn = async (req, res, next) => {
     next(err);
   }
 };
-
-export { createColumn, updateColumn, deleteColumn };
