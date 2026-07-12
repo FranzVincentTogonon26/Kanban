@@ -2,12 +2,12 @@ import bcrypt from "bcryptjs";
 
 import ApiError from "../utils/ApiError.js";
 import User from "../models/user.model.js";
-import { signinSchema, signupSchema } from "../validations/auth.validation.js";
+import { loginSchema, registerSchema } from "../validations/auth.validation.js";
 import jwtToken from "../utils/jwt.js";
 
-export const signup = async (req, res, next) => {
+export const register = async (req, res, next) => {
   try {
-    const validationResult = signupSchema.safeParse(req.body);
+    const validationResult = registerSchema.safeParse(req.body);
     if (!validationResult.success) {
       const errorMessages = validationResult.error.issues.map(
         (err) => err.message,
@@ -41,9 +41,9 @@ export const signup = async (req, res, next) => {
   }
 };
 
-export const signin = async (req, res, next) => {
+export const login = async (req, res, next) => {
   try {
-    const validationResult = signinSchema.safeParse(req.body);
+    const validationResult = loginSchema.safeParse(req.body);
     if (!validationResult.success) {
       const errorMessages = validationResult.error.issues.map(
         (err) => err.message,

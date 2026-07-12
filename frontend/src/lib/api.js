@@ -1,23 +1,10 @@
-// ----------------------------------------------------------------------------
-// API layer — BOILERPLATE (mock) build
-//
-// The whole UI runs on local mock data so you can build the frontend before the
-// backend exists. Components never change — they only import authApi/boardApi/
-// taskApi/columnApi/aiApi/userApi from here.
-//
-//   👉  WHEN THE BACKEND IS READY:
-//        1. Uncomment the "REAL API" block below (it's the actual axios code).
-//        2. Delete — or comment out — the "MOCK API" block at the bottom.
-//        3. Remove the `./mockData` import.
-//      That's the only file you touch to go live.
-// ----------------------------------------------------------------------------
+import axios from "axios";
 
-const TOKEN_KEY = "kanban_token";
 export const getToken = () => localStorage.getItem(TOKEN_KEY);
 export const setToken = (t) => localStorage.setItem(TOKEN_KEY, t);
 export const clearToken = () => localStorage.removeItem(TOKEN_KEY);
 
-import axios from "axios";
+const TOKEN_KEY = "token";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api",

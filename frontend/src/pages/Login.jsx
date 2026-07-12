@@ -14,9 +14,6 @@ const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
-  const fillDemo = () =>
-    setForm({ email: "alex@timetoprogram.com", password: "Test@1234" });
-
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -85,15 +82,6 @@ const Login = () => {
                 loading={loading}
               >
                 Log in
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="lg"
-                className="w-full"
-                onClick={fillDemo}
-              >
-                Use demo account
               </Button>
             </form>
           </div>

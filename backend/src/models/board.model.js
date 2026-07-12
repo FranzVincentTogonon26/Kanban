@@ -28,7 +28,7 @@ class Board {
       [userId],
     );
 
-    return result.rows[0];
+    return result.rows;
   }
 
   // Create Board
