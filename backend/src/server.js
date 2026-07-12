@@ -1,6 +1,12 @@
+import http from "http";
+
 import app from "./app.js";
 import { ENV } from "./config/env.js";
+import { initSocket } from "./socket/socket.io.js";
 
-app.listen(ENV.PORT, () => {
-  console.log(`Server is running on port: ${ENV.PORT}`);
+const server = http.createServer(app);
+initSocket(server);
+
+server.listen(ENV.PORT, () => {
+  console.log(`🌐 API + 🔌 Socket.IO listening on port: ${ENV.PORT}`);
 });
