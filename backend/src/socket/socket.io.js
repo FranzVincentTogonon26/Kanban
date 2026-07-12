@@ -40,7 +40,7 @@ export const initSocket = (httpServer) => {
 
     socket.on("board:join", async (boardId, ack) => {
       try {
-        const userAccess = await SocketIO.userCanAccessBoard(user.id, boardId);
+        const userAccess = await SocketIO.userCanAccessBoard(boardId, user.id);
         if (!userAccess) {
           if (ack) ack({ ok: false, error: "No access to this board" });
           return;
@@ -69,6 +69,7 @@ export const initSocket = (httpServer) => {
         socket.emit("presence:sync", { boardId, users: viewers });
         if (ack) ack({ ok: true });
       } catch (err) {
+        console.error("board:join error:", err);
         if (ack) ack({ ok: false, error: "Failed to join board" });
       }
     });
@@ -82,6 +83,8 @@ export const initSocket = (httpServer) => {
     });
 
     socket.on("presence:cursor", ({ boardId, x, y }) => {
+      const room = boardRoom(boardId);
+      if (!socket.rooms.has(room)) return;
       socket.to(boardRoom(boardId)).emit("presence:cursor", {
         user: { id: user.id, name: user.name },
         x,
@@ -92,8 +95,12 @@ export const initSocket = (httpServer) => {
     socket.on("disconnecting", () => {
       for (const room of socket.rooms) {
         if (room === socket.id) continue;
+        const boardId = room.startsWith("board:")
+          ? room.slice("board:".length)
+          : null;
         socket.to(room).emit("presence:leave", {
           user: { id: user.id, name: user.name },
+          boardId,
         });
       }
     });

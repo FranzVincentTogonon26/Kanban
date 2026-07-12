@@ -10,7 +10,7 @@ class SocketIO {
       [boardId, userId],
     );
 
-    return result.rows[0] > 0;
+    return result.rows.length > 0;
   }
 }
 
