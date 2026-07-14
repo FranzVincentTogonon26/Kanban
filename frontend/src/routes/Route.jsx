@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useContext";
 import { FullScreenSpinner } from "../components/ui/Spinner";
 
 export const RootRedirect = ({ children }) => {

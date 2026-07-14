@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Input } from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import AuthAside from "../components/auth/AuthAside";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useContext";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
