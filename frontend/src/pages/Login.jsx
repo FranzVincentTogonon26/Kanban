@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import toast from "react-hot-toast";
 import { Zap } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
+import { useAuth } from "../hooks/useAuth";
+
 import { Input } from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import AuthAside from "../components/auth/AuthAside";
@@ -19,7 +21,7 @@ const Login = () => {
     setLoading(true);
     try {
       await login(form);
-      toast.success("Welcome back!");
+      toast.success("Welcome back!.");
       navigate(location.state?.from?.pathname || "/dashboard", {
         replace: true,
       });
@@ -59,7 +61,7 @@ const Login = () => {
                 id="email"
                 label="Email"
                 type="email"
-                placeholder="you@company.com"
+                placeholder="JohnDoe@email.com"
                 autoComplete="email"
                 required
                 value={form.email}
