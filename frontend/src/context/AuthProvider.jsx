@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "./createContext";
 import { authApi, clearToken, getToken, setToken } from "../lib/api";
 import { connecSocket } from "../lib/socket";
 

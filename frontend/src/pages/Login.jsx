@@ -3,7 +3,7 @@ import { Zap } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useContext";
 
 import { Input } from "../components/ui/Input";
 import Button from "../components/ui/Button";
