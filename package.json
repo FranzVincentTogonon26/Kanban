@@ -1,0 +1,20 @@
+{
+  "name": "Ai Kanban",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "concurrently": "^10.0.3"
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ]
+}

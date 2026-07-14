@@ -1,4 +1,10 @@
-import { formatDistanceToNow, format, isPast, isToday, isTomorrow } from "date-fns";
+import {
+  formatDistanceToNow,
+  format,
+  isPast,
+  isToday,
+  isTomorrow,
+} from "date-fns";
 
 /** Tiny classnames joiner (no extra deps). */
 export const cn = (...args) => args.flat().filter(Boolean).join(" ");
@@ -15,16 +21,43 @@ export const priorityMeta = (value) =>
 
 // Pastel accents assigned to columns by index (Linear/Notion-style boards).
 const COLUMN_ACCENTS = [
-  { dot: "#f43f5e", soft: "rgba(244, 63, 94, 0.06)", ring: "rgba(244, 63, 94, 0.22)" }, // rose
-  { dot: "#f59e0b", soft: "rgba(245, 158, 11, 0.07)", ring: "rgba(245, 158, 11, 0.24)" }, // amber
-  { dot: "#0ea5e9", soft: "rgba(14, 165, 233, 0.06)", ring: "rgba(14, 165, 233, 0.22)" }, // sky
-  { dot: "#8b5cf6", soft: "rgba(139, 92, 246, 0.06)", ring: "rgba(139, 92, 246, 0.22)" }, // violet
-  { dot: "#10b981", soft: "rgba(16, 185, 129, 0.06)", ring: "rgba(16, 185, 129, 0.22)" }, // emerald
-  { dot: "#ec4899", soft: "rgba(236, 72, 153, 0.06)", ring: "rgba(236, 72, 153, 0.22)" }, // pink
+  {
+    dot: "#f43f5e",
+    soft: "rgba(244, 63, 94, 0.06)",
+    ring: "rgba(244, 63, 94, 0.22)",
+  }, // rose
+  {
+    dot: "#f59e0b",
+    soft: "rgba(245, 158, 11, 0.07)",
+    ring: "rgba(245, 158, 11, 0.24)",
+  }, // amber
+  {
+    dot: "#0ea5e9",
+    soft: "rgba(14, 165, 233, 0.06)",
+    ring: "rgba(14, 165, 233, 0.22)",
+  }, // sky
+  {
+    dot: "#8b5cf6",
+    soft: "rgba(139, 92, 246, 0.06)",
+    ring: "rgba(139, 92, 246, 0.22)",
+  }, // violet
+  {
+    dot: "#10b981",
+    soft: "rgba(16, 185, 129, 0.06)",
+    ring: "rgba(16, 185, 129, 0.22)",
+  }, // emerald
+  {
+    dot: "#ec4899",
+    soft: "rgba(236, 72, 153, 0.06)",
+    ring: "rgba(236, 72, 153, 0.22)",
+  }, // pink
 ];
 
 export const columnAccent = (index = 0) =>
-  COLUMN_ACCENTS[((index % COLUMN_ACCENTS.length) + COLUMN_ACCENTS.length) % COLUMN_ACCENTS.length];
+  COLUMN_ACCENTS[
+    ((index % COLUMN_ACCENTS.length) + COLUMN_ACCENTS.length) %
+      COLUMN_ACCENTS.length
+  ];
 
 export const initials = (name = "") =>
   name
@@ -36,9 +69,18 @@ export const initials = (name = "") =>
 
 /** Deterministic avatar color from a string id — earthy palette to match the green theme. */
 export const colorFromId = (id = "") => {
-  const palette = ["#2f8159", "#2c9c8f", "#6f9b54", "#5f7da6", "#c26a45", "#9a7b3c", "#a05d7d"];
+  const palette = [
+    "#2f8159",
+    "#2c9c8f",
+    "#6f9b54",
+    "#5f7da6",
+    "#c26a45",
+    "#9a7b3c",
+    "#a05d7d",
+  ];
   let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = id.charCodeAt(i) + ((hash << 5) - hash);
+  for (let i = 0; i < id.length; i++)
+    hash = id.charCodeAt(i) + ((hash << 5) - hash);
   return palette[Math.abs(hash) % palette.length];
 };
 

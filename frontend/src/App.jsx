@@ -1,63 +1,51 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AuthProvider } from "./context/AuthProvider";
+import { ProtectedRoutes, PublicRoutes, RootRedirect } from "./routes/Route";
 import { Toaster } from "react-hot-toast";
-import { AuthProvider } from "./context/AuthContext";
-import { ProtectedRoute, PublicOnlyRoute } from "./routes/ProtectedRoute";
 
-import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import BoardPage from "./pages/BoardPage";
-import MyTasks from "./pages/MyTasks";
-import Calendar from "./pages/Calendar";
-import Team from "./pages/Team";
-import Settings from "./pages/Settings";
-import NotFound from "./pages/NotFound";
 import AppLayout from "./components/layout/AppLayout";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => (
   <BrowserRouter>
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<Landing />} />
+        {/* Root Route */}
+        <Route path="/" element={<RootRedirect />} />
+
+        {/* Public Routes */}
         <Route
           path="/login"
           element={
-            <PublicOnlyRoute>
+            <PublicRoutes>
               <Login />
-            </PublicOnlyRoute>
+            </PublicRoutes>
           }
         />
         <Route
           path="/register"
           element={
-            <PublicOnlyRoute>
+            <PublicRoutes>
               <Register />
-            </PublicOnlyRoute>
+            </PublicRoutes>
           }
         />
 
+        {/* Protectec Routes */}
         <Route
           element={
-            <ProtectedRoute>
+            <ProtectedRoutes>
               <AppLayout />
-            </ProtectedRoute>
+            </ProtectedRoutes>
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/my-tasks" element={<MyTasks />} />
-          <Route path="/calendar" element={<Calendar />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/board/:boardId" element={<BoardPage />} />
         </Route>
-
-        <Route path="/404" element={<NotFound />} />
-        <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
-
       <Toaster
-        position="bottom-right"
+        position="top-center"
         toastOptions={{
           style: {
             background: "#ffffff",

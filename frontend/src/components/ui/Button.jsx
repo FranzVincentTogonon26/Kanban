@@ -9,7 +9,8 @@ const variants = {
   ghost: "hover:bg-surface-2 text-muted hover:text-ink",
   danger:
     "bg-priority-urgent text-white shadow-[0_8px_20px_rgba(225,29,72,0.28)] hover:brightness-[1.06]",
-  outline: "border border-line bg-surface hover:border-brand-300 hover:bg-surface-2 text-ink shadow-[var(--shadow-card)]",
+  outline:
+    "border border-line bg-surface hover:border-brand-300 hover:bg-surface-2 text-ink shadow-[var(--shadow-card)]",
   soft: "bg-brand-50 text-brand-700 hover:bg-brand-100",
 };
 
@@ -35,7 +36,7 @@ const Button = ({
       "inline-flex select-none items-center justify-center whitespace-nowrap rounded-full font-semibold transition-all duration-200 ease-[var(--ease-spring)] focus-ring disabled:opacity-50 disabled:pointer-events-none active:scale-[0.97]",
       variants[variant],
       sizes[size],
-      className
+      className,
     )}
     disabled={disabled || loading}
     {...props}

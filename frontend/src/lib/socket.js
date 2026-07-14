@@ -1,14 +1,13 @@
 import { io } from "socket.io-client";
 import { getToken } from "./api";
 
-const URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:8000";
+const URL = import.meta.env.VITE_SOCKET_URL;
 
 let socket = null;
 
-// Lazily create (and authenticate) the shared socket connection.
 export const getSocket = () => {
   if (!socket) {
-    socket = io(URL, {
+    socket = io.apply(URL, {
       autoConnect: false,
       auth: { token: getToken() },
       transports: ["websocket"],
@@ -17,11 +16,11 @@ export const getSocket = () => {
   return socket;
 };
 
-export const connectSocket = () => {
-  const s = getSocket();
-  s.auth = { token: getToken() };
-  if (!s.connected) s.connect();
-  return s;
+export const connecSocket = () => {
+  const socket = getSocket();
+  socket.auth = { token: getToken() };
+  if (!socket.connected) socket.connect();
+  return socket;
 };
 
 export const disconnectSocket = () => {
