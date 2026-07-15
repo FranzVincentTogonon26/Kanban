@@ -3,11 +3,11 @@ import { Outlet } from "react-router-dom";
 
 import { cn } from "../../lib/utils";
 import { LayoutContext } from "../../context/createContext";
+import { BoardsProvider } from "../../context/BoardContext";
 
 import Sidebar from "./Sidebar";
 import CreateBoardModal from "../board/CreateBoardModal";
 import CommandMenu from "./CommandMenu";
-// import { BoardsProvider } from "../../context/BoardContext";
 
 const LayoutInner = () => {
   const [createOpen, setCreateOpen] = useState(false);
@@ -74,12 +74,12 @@ const LayoutInner = () => {
   );
 };
 
-// const AppLayout = () => {
-//   return (
-//     <BoardsProvider>
-//       <LayoutInner />
-//     </BoardsProvider>
-//   );
-// };
+const AppLayout = () => {
+  return (
+    <BoardsProvider>
+      <LayoutInner />
+    </BoardsProvider>
+  );
+};
 
-export default LayoutInner;
+export default AppLayout;

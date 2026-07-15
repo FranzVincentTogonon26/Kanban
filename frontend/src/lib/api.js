@@ -35,3 +35,9 @@ export const authApi = {
     api.post("/auth/register", data).then((response) => response.data),
   me: () => api.get("/auth/me").then((response) => response.data.user),
 };
+
+export const boardApi = {
+  list: () => api.get("/boards").then((response) => response.data.boards),
+  create: (data) =>
+    api.post("/boards", data).then((response) => response.data.board),
+};

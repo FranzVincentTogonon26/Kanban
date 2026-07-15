@@ -3,13 +3,16 @@ import {
   CheckSquare,
   ChevronLeft,
   ChevronRight,
+  HelpCircle,
   LayoutDashboard,
+  LogOut,
   Plus,
+  Settings,
   Users,
   Zap,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth, useBoards } from "../../hooks/useContext";
 import Avatar from "../ui/Avatar";
 
@@ -55,10 +58,10 @@ const NavItem = ({ to, icon: Icon, label, collapsed, badge }) => (
   </NavLink>
 );
 
-const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
+const Sidebar = ({ collapsed, onToggle, onCreateBoard, onCommand }) => {
   const { boards, loading } = useBoards();
-  const { user } = useAuth();
-  // const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <aside
@@ -146,7 +149,7 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
 
       <div className="mt-1 flex-1 space-y-0.5 overflow-y-auto overflow-x-hidden px-3 pb-2 no-scrollbar">
         {loading
-          ? Array.from({ length: 4 }).map((_, i) => (
+          ? Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
                 className={cn(
@@ -199,6 +202,46 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
                 );
               })}
       </div>
+
+      {/* General */}
+      <SectionLabel collapsed={collapsed}>General</SectionLabel>
+      <nav className="space-y-1 px-3">
+        <NavItem
+          to="/settings"
+          icon={Settings}
+          label="Settings"
+          collapsed={collapsed}
+        />
+        <button
+          onClick={onCommand}
+          title={collapsed ? "Search & shortcuts" : undefined}
+          className={cn(
+            "group flex h-11 w-full items-center rounded-2xl text-sm font-medium text-muted transition-colors duration-200 hover:bg-surface-2 hover:text-ink",
+            collapsed ? "mx-auto w-11 justify-center" : "gap-3 px-3",
+          )}
+        >
+          <HelpCircle className="h-5 w-5 shrink-0" />
+          {!collapsed && (
+            <span className="flex-1 truncate text-left">Help & search</span>
+          )}
+        </button>
+        <button
+          onClick={() => {
+            logout();
+            navigate("/login");
+          }}
+          title={collapsed ? "Log out" : undefined}
+          className={cn(
+            "group flex h-11 w-full items-center rounded-2xl text-sm font-medium text-muted transition-colors duration-200 hover:bg-priority-urgent/10 hover:text-priority-urgent",
+            collapsed ? "mx-auto w-11 justify-center" : "gap-3 px-3",
+          )}
+        >
+          <LogOut className="h-5 w-5 shrink-0" />
+          {!collapsed && (
+            <span className="flex-1 truncate text-left">Log out</span>
+          )}
+        </button>
+      </nav>
 
       {/* User */}
       <div className="mx-3 mt-3 border-t" />
