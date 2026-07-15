@@ -32,7 +32,6 @@ export const createBoard = async (req, res, next) => {
       DEFAULT_COLUMNS,
     );
 
-    console.log("TEST LOGS", board);
     res.status(201).json({ board });
   } catch (err) {
     next(err);
@@ -100,8 +99,9 @@ export const getActivity = async (req, res, next) => {
 
 export const addMember = async (req, res, next) => {
   try {
-    if (req.board.role !== "owner" || req.board.role !== "admin")
+    if (!["owner", "admin"].includes(req.board.role.toLowerCase())) {
       throw ApiError.forbidden("Only owners or admin can add members");
+    }
 
     const validationResult = memberSchema.safeParse(req.body);
     if (!validationResult.success) {
@@ -116,6 +116,9 @@ export const addMember = async (req, res, next) => {
 
     const user = await User.findUserByEmail(email);
     if (!user) throw ApiError.notFound("No user found with that email");
+
+    if (req.body.ownerId === user.id)
+      throw ApiError.conflict("The board owner is already a member.");
 
     await Board.createBoardMember(req.board.id, user.id, role);
     await logActivity({
@@ -142,14 +145,27 @@ export const addMember = async (req, res, next) => {
 
 export const removeMember = async (req, res, next) => {
   try {
-    if (req.board.role !== "owner" || req.board.role !== "admin")
+    if (!["owner", "admin"].includes(req.board.role.toLowerCase())) {
       throw ApiError.forbidden("Only owners or admin can add members");
+    }
 
     const { userId } = req.params;
     if (userId === req.board.owner_id)
       throw ApiError.badRequest("Cannot remove the board owner");
 
+    const user = await User.findUserById(userId);
+    if (!user) throw ApiError.notFound("No user found with that email");
+
     await Board.removeBoardMember(req.board.id, userId);
+
+    await logActivity({
+      boardId: req.board.id,
+      userId: req.board.owner_id,
+      action: "member.remove",
+      message: `${req.user.name} remove ${user.name} to the board`,
+      metadata: { memberId: userId },
+    });
+
     res.json({ success: true });
   } catch (err) {
     next(err);

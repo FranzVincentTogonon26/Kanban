@@ -69,7 +69,7 @@ class Board {
   static async getBoard(boardId) {
     return Promise.all([
       query("SELECT * FROM boards WHERE id = $1", [boardId]),
-      query("SELECT * fROM columns WHERE board_id = $1 ORDER BY position ASC", [
+      query("SELECT * FROM columns WHERE board_id = $1 ORDER BY position ASC", [
         boardId,
       ]),
       query(

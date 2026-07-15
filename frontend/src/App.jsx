@@ -9,6 +9,7 @@ import AppLayout from "./components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
+import BoardPage from "./pages/BoardPage";
 
 const App = () => (
   <BrowserRouter>
@@ -44,6 +45,7 @@ const App = () => (
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/board/:boardId" element={<BoardPage />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
 

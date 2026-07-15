@@ -5,6 +5,10 @@ import Button from "../ui/Button";
 const Topbar = ({ title, subtitle, actions, onCreateBoard }) => {
   const { openCommand } = useLayout();
 
+  const capitalizedSubtitle = subtitle
+    ? subtitle.charAt(0).toUpperCase() + subtitle.slice(1)
+    : "";
+
   return (
     <header className="glass sticky top-0 z-20 flex h-[72px] items-center gap-4 border-b px-6">
       <div className="min-w-0 shrink">
@@ -13,7 +17,9 @@ const Topbar = ({ title, subtitle, actions, onCreateBoard }) => {
             {title}
           </h1>
         )}
-        {subtitle && <p className="truncate text-xs text-muted">{subtitle}</p>}
+        {subtitle && (
+          <p className="truncate text-xs text-muted">{capitalizedSubtitle}</p>
+        )}
       </div>
 
       <div className="ml-auto flex items-center gap-2.5">
