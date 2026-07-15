@@ -80,7 +80,7 @@ export const FilterSelect = ({ className, children, ...props }) => (
   <div className="relative">
     <select
       className={cn(
-        "h-9 cursor-pointer appearance-none rounded-full border border-line bg-surface pl-4 pr-9 text-xs font-medium text-ink shadow-[var(--shadow-card)] outline-none transition-all duration-200 hover:border-brand-300 focus:border-brand-500/50 focus:ring-2 focus:ring-brand-500/15",
+        "h-9 cursor-pointer appearance-none rounded-full border border-line bg-surface pl-4 pr-9 text-sm  text-ink shadow-[var(--shadow-card)] outline-none transition-all duration-200 hover:border-brand-300 focus:border-brand-500/50 focus:ring-2 focus:ring-brand-500/15",
         className,
       )}
       {...props}
