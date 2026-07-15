@@ -3,7 +3,6 @@ import {
   CheckSquare,
   ChevronLeft,
   ChevronRight,
-  HelpCircle,
   LayoutDashboard,
   LogOut,
   Plus,
@@ -58,7 +57,7 @@ const NavItem = ({ to, icon: Icon, label, collapsed, badge }) => (
   </NavLink>
 );
 
-const Sidebar = ({ collapsed, onToggle, onCreateBoard, onCommand }) => {
+const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
   const { boards, loading } = useBoards();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -212,19 +211,6 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard, onCommand }) => {
           label="Settings"
           collapsed={collapsed}
         />
-        <button
-          onClick={onCommand}
-          title={collapsed ? "Search & shortcuts" : undefined}
-          className={cn(
-            "group flex h-11 w-full items-center rounded-2xl text-sm font-medium text-muted transition-colors duration-200 hover:bg-surface-2 hover:text-ink",
-            collapsed ? "mx-auto w-11 justify-center" : "gap-3 px-3",
-          )}
-        >
-          <HelpCircle className="h-5 w-5 shrink-0" />
-          {!collapsed && (
-            <span className="flex-1 truncate text-left">Help & search</span>
-          )}
-        </button>
         <button
           onClick={() => {
             logout();

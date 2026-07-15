@@ -47,7 +47,6 @@ const LayoutInner = () => {
           collapsed={collapsed}
           onToggle={toggleSidebar}
           onCreateBoard={openCreateBoard}
-          onCommand={openCommand}
         />
         <main
           className={cn(

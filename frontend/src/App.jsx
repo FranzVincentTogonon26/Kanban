@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
 import { ProtectedRoutes, PublicRoutes, RootRedirect } from "./routes/Route";
 import { Toaster } from "react-hot-toast";
@@ -7,6 +7,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AppLayout from "./components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
+import NotFound from "./pages/NotFound";
+import Settings from "./pages/Settings";
 
 const App = () => (
   <BrowserRouter>
@@ -42,7 +44,11 @@ const App = () => (
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
+
+        <Route path="/404" element={<NotFound />} />
+        <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
       <Toaster
         position="top-center"
