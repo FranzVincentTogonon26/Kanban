@@ -20,6 +20,11 @@ import { FilterSelect } from "../components/ui/Input";
 import { PRIORITIES } from "../lib/utils";
 import { ColumnSkeleton } from "../components/ui/Skeleton";
 import KanbanBoard from "../components/board/KanbanBoard";
+import TaskModal from "../components/board/TaskModal";
+import toast from "react-hot-toast";
+
+import { aiApi } from "../lib/api";
+import PromptDialog from "../components/ui/PromptDialog";
 
 const BoardPage = () => {
   const { boardId } = useParams();
@@ -57,6 +62,23 @@ const BoardPage = () => {
       return true;
     });
   }, [getBoard.tasks, filterPriority, filterAssignee, search]);
+
+  const handleBreakdown = async (task) => {
+    try {
+      const subtasks = await aiApi.breakdown(boardId, { taskId: task.id });
+      for (const s of subtasks) {
+        await getBoard.createTask({
+          column_id: task.column_id,
+          title: s.title,
+          description: s.description,
+          priority: s.priority,
+        });
+      }
+      toast.success(`Added ${subtasks.length} subtasks`);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
 
   const canManage =
     getBoard.role.toLowerCase() === "owner" ||
@@ -174,7 +196,7 @@ const BoardPage = () => {
               setFilterAssignee("");
               setSearch("");
             }}
-            className="rounded-full px-3 py-1.5 text-sm font-medium text-faint transition-colors hover:bg-surface-2 hover:text-ink"
+            className="rounded-full px-3 py-1.5 text-sm font-medium text-muted bg-surface-2 transition-colors hover:bg-priority-urgent/10 hover:text-priority-urgent"
           >
             Clear
           </button>
@@ -185,7 +207,7 @@ const BoardPage = () => {
       </div>
 
       {/* Board */}
-      <div className="flex-1 overflow-hidden pt-4">
+      <div className="flex-1 overflow-hidden pt-5">
         {getBoard.loading ? (
           <div className="flex gap-4 px-6">
             {[0, 1, 2, 3].map((i) => (
@@ -209,6 +231,20 @@ const BoardPage = () => {
         )}
       </div>
 
+      {/* Modals */}
+      <TaskModal
+        open={taskModal.open}
+        onClose={() =>
+          setTaskModal({ open: false, task: null, columnId: null })
+        }
+        task={taskModal.task}
+        defaultColumnId={taskModal.columnId}
+        columns={getBoard.columns}
+        members={getBoard.members}
+        actions={getBoard}
+        onBreakdown={handleBreakdown}
+      />
+
       <ActivityFeed
         open={activityOpen}
         onClose={() => setActivityOpen(false)}
@@ -224,6 +260,22 @@ const BoardPage = () => {
         canManage={canManage}
         ownerId={getBoard.board?.[0].owner_id}
       />
+
+      {addColumnOpen && (
+        <PromptDialog
+          open
+          onClose={() => setAddColumnOpen(false)}
+          title="Add column"
+          description="Give your new column a name."
+          label="Column name"
+          placeholder="e.g. Backlog"
+          submitLabel="Add column"
+          onSubmit={(name) => {
+            getBoard.addColumn(name);
+            setAddColumnOpen(false);
+          }}
+        />
+      )}
     </>
   );
 };

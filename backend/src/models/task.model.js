@@ -58,7 +58,7 @@ class Task {
                 a.email AS assignee_email,
                 a.avatar_url AS assignee_avatar
          FROM tasks t
-         LEFT JOIN users a ON a.id = t.assignee_id
+         LEFT JOIN users a ON a.id = t.assigned_id
          WHERE ${filters.join(" AND ")}
          ORDER BY t.position ASC`,
       params,
@@ -119,7 +119,7 @@ class Task {
                 description  = COALESCE($4, description),
                 priority     = COALESCE($5, priority),
                 due_date     = COALESCE($6, due_date),
-                assignee_id  = $7,
+                assigned_id  = $7,
                 updated_at   = now()
          WHERE id = $1 AND board_id = $2
          RETURNING id`,

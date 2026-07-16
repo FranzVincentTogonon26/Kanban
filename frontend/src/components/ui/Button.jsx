@@ -29,11 +29,13 @@ const Button = ({
   loading = false,
   className,
   disabled,
+  title,
   ...props
 }) => (
   <button
+    data-tip={title}
     className={cn(
-      "inline-flex select-none items-center justify-center whitespace-nowrap rounded-full font-semibold transition-all duration-200 ease-[var(--ease-spring)] focus-ring disabled:opacity-50 disabled:pointer-events-none active:scale-[0.97]",
+      "tooltip tooltip-bottom inline-flex select-none items-center justify-center whitespace-nowrap rounded-full font-semibold transition-all duration-200 ease-[var(--ease-spring)] focus-ring disabled:opacity-50 disabled:pointer-events-none active:scale-[0.97]",
       variants[variant],
       sizes[size],
       className,

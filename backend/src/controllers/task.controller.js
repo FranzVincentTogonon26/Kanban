@@ -1,7 +1,7 @@
 import Task from "../models/task.model.js";
-import { addColumnSchema } from "../validations/column.validation.js";
 import ApiError from "../utils/ApiError.js";
 import { emitToBoard, logActivity } from "../realtime/index.js";
+import { addTaskSchema } from "../validations/task.validation.js";
 
 const PRIORITIES = ["low", "medium", "high", "urgent"];
 
@@ -23,7 +23,7 @@ export const listTask = async (req, res, next) => {
 
 export const createTask = async (req, res, next) => {
   try {
-    const validationResult = addColumnSchema.safeParse(req.body);
+    const validationResult = addTaskSchema.safeParse(req.body);
     if (!validationResult.success) {
       const errorMessages = validationResult.error.issues.map(
         (err) => err.message,
@@ -60,7 +60,7 @@ export const createTask = async (req, res, next) => {
       boardId: req.board.id,
       userId: req.user.id,
       action: "task.created",
-      message: `${req.user.name} created "${task.title}"`,
+      message: `${req.user.name} created "${task.title}" task`,
       metadata: { taskId: task.id },
     });
 
@@ -77,7 +77,7 @@ export const updateTask = async (req, res, next) => {
       throw ApiError.badRequest("Invalid Priority");
 
     const updateTask = await Task.updateTask(
-      req.params.taskId,
+      req.params.tasksId,
       req.board.id,
       title,
       description,
@@ -86,10 +86,17 @@ export const updateTask = async (req, res, next) => {
       assignee_id,
     );
 
-    if (!updateTask) throw ApiError.notFound("Task not found..");
+    const task = await Task.fetchTask(req.params.tasksId);
+    if (!task) throw ApiError.notFound("Task not found..");
 
-    const task = await Task.fetchTask(updateTask.id);
     emitToBoard(req.board.id, "task:updated", task);
+    await logActivity({
+      boardId: req.board.id,
+      userId: req.user.id,
+      action: "task.updated",
+      message: `${req.user.name} updated  "${task.title}" task`,
+      metadata: { taskId: req.params.tasksId },
+    });
     res.json({ task });
   } catch (err) {
     next(err);
@@ -103,7 +110,16 @@ export const moveTask = async (req, res, next) => {
       throw ApiError.badRequest("Column Id and position are required");
     }
 
-    await Task.ensureColumnInBoard(column_id, req.board.id);
+    console.log("COLUMN ID", column_id);
+    console.log("Position", position);
+
+    const ensureColumn = await Task.ensureColumnInBoard(
+      column_id,
+      req.board.id,
+    );
+    if (!ensureColumn) throw ApiError.badRequest("Invalid Column");
+
+    console.log("TASK", task);
 
     const prevRes = await Task.getColumnIdMove(req.params.taskId, req.board.id);
     if (!prevRes.length) throw ApiError.notFound("Task not found..");
@@ -139,14 +155,14 @@ export const moveTask = async (req, res, next) => {
 export const deleteTask = async (req, res, next) => {
   try {
     const task = await Task.deleteTask(req.params.taskId, req.board.id);
-    if (!task.length) throw ApiError.notFound("Task not found");
+    if (!task) throw ApiError.notFound("Task not found");
 
     emitToBoard(req.board.id, "task:deleted", { id: req.params.taskId });
     await logActivity({
       boardId: req.board.id,
       userId: req.user.id,
       action: "task.deleted",
-      message: `${req.user.name} deleted "${task.title}"`,
+      message: `${req.user.name} deleted "${task.title}" task`,
       metadata: { taskId: req.params.taskId },
     });
 

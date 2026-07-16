@@ -10,7 +10,7 @@ const Topbar = ({ title, subtitle, actions, onCreateBoard }) => {
     : "";
 
   return (
-    <header className="glass sticky top-0 z-20 flex h-[72px] items-center gap-4 border-b px-6">
+    <header className="sticky top-0 z-20 flex h-[72px] items-center gap-4 border-b px-6">
       <div className="min-w-0 shrink">
         {title && (
           <h1 className="truncate font-display text-lg font-bold leading-tight tracking-tight text-ink">
@@ -38,8 +38,8 @@ const Topbar = ({ title, subtitle, actions, onCreateBoard }) => {
         {actions}
 
         <button
-          className="hidden h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-muted shadow-[var(--shadow-card)] transition-all duration-200 hover:-translate-y-px hover:text-ink hover:shadow-[var(--shadow-soft)] sm:flex"
-          title="Notifications"
+          className="tooltip tooltip-bottom hidden h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-muted shadow-[var(--shadow-card)] transition-all duration-200 hover:-translate-y-px hover:text-ink hover:shadow-[var(--shadow-soft)] sm:flex"
+          data-tip="Notifications"
         >
           <Bell className="h-4.5 w-4.5" />
         </button>

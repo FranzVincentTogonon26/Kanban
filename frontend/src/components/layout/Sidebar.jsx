@@ -29,11 +29,13 @@ const SectionLabel = ({ children, collapsed }) =>
 const NavItem = ({ to, icon: Icon, label, collapsed, badge }) => (
   <NavLink
     to={to}
-    title={collapsed ? label : undefined}
+    data-tip={collapsed ? label : undefined}
     className={({ isActive }) =>
       cn(
         "group relative flex h-11 items-center rounded-2xl text-sm font-medium transition-colors duration-200",
-        collapsed ? "mx-auto w-11 justify-center" : "gap-3 px-3",
+        collapsed
+          ? "mx-auto w-11 justify-center tooltip tooltip-right "
+          : "gap-3 px-3",
         isActive
           ? "bg-brand-50 font-semibold text-brand-700"
           : "text-muted hover:bg-surface-2 hover:text-ink",
@@ -65,7 +67,7 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
   return (
     <aside
       className={cn(
-        "fixed inset-y-3 left-3 z-40 hidden flex-col overflow-hidden rounded-3xl border border-line bg-surface/90 shadow-soft backdrop-blur-xl transition-[width] duration-300 ease-[var(--ease-spring)] md:flex",
+        "fixed inset-y-3 left-3 z-40 hidden flex-col rounded-3xl border border-line bg-surface/90 shadow-soft backdrop-blur-xl transition-[width] duration-300 ease-[var(--ease-spring)] md:flex",
         collapsed ? "w-[72px]" : "w-[252px]",
       )}
     >
@@ -122,7 +124,7 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
           label="Calendar"
           collapsed={collapsed}
         />
-        <NavItem to="/team" icon={Users} label="Team" collapsed={collapsed} />
+        <NavItem to="/team" icon={Users} label="Teams" collapsed={collapsed} />
       </nav>
 
       {/* Boards */}
@@ -146,7 +148,7 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
         </button>
       </div>
 
-      <div className="mt-1 flex-1 space-y-0.5 overflow-y-auto overflow-x-hidden px-3 pb-2 no-scrollbar">
+      <div className="mt-1 flex-1 space-y-0.5 px-3 pb-2 no-scrollbar">
         {loading
           ? Array.from({ length: 5 }).map((_, i) => (
               <div
@@ -169,13 +171,13 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
                 return (
                   <NavLink
                     key={b.id}
+                    data-tip={collapsed ? b.title : null}
                     to={`/board/${b.id}`}
-                    title={b.title}
                     className={({ isActive }) =>
                       cn(
                         "flex h-10 items-center rounded-2xl text-sm transition-colors duration-200",
                         collapsed
-                          ? "mx-auto w-10 justify-center"
+                          ? "mx-auto w-10 justify-center tooltip tooltip-right"
                           : "gap-3 px-2",
                         isActive
                           ? "bg-brand-50 font-medium text-brand-700"
