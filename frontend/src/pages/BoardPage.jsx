@@ -21,9 +21,9 @@ import { PRIORITIES } from "../lib/utils";
 import { ColumnSkeleton } from "../components/ui/Skeleton";
 import KanbanBoard from "../components/board/KanbanBoard";
 import TaskModal from "../components/board/TaskModal";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 
-import { aiApi } from "../lib/api";
+// import { aiApi } from "../lib/api";
 import PromptDialog from "../components/ui/PromptDialog";
 
 const BoardPage = () => {
@@ -50,7 +50,7 @@ const BoardPage = () => {
   const filteredTasks = useMemo(() => {
     return getBoard.tasks.filter((t) => {
       if (filterPriority && t.priority !== filterPriority) return false;
-      if (filterAssignee && t.assignee_id !== filterAssignee) return false;
+      if (filterAssignee && t.assigned_id !== filterAssignee) return false;
       if (search) {
         const q = search.toLowerCase();
         if (
@@ -62,23 +62,6 @@ const BoardPage = () => {
       return true;
     });
   }, [getBoard.tasks, filterPriority, filterAssignee, search]);
-
-  const handleBreakdown = async (task) => {
-    try {
-      const subtasks = await aiApi.breakdown(boardId, { taskId: task.id });
-      for (const s of subtasks) {
-        await getBoard.createTask({
-          column_id: task.column_id,
-          title: s.title,
-          description: s.description,
-          priority: s.priority,
-        });
-      }
-      toast.success(`Added ${subtasks.length} subtasks`);
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
 
   const canManage =
     getBoard.role.toLowerCase() === "owner" ||
@@ -233,6 +216,7 @@ const BoardPage = () => {
 
       {/* Modals */}
       <TaskModal
+        key={taskModal.task?.id ?? `new-${taskModal.columnId ?? "default"}`}
         open={taskModal.open}
         onClose={() =>
           setTaskModal({ open: false, task: null, columnId: null })
@@ -242,7 +226,6 @@ const BoardPage = () => {
         columns={getBoard.columns}
         members={getBoard.members}
         actions={getBoard}
-        onBreakdown={handleBreakdown}
       />
 
       <ActivityFeed

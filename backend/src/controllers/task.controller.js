@@ -110,33 +110,37 @@ export const moveTask = async (req, res, next) => {
       throw ApiError.badRequest("Column Id and position are required");
     }
 
-    console.log("COLUMN ID", column_id);
-    console.log("Position", position);
-
     const ensureColumn = await Task.ensureColumnInBoard(
       column_id,
       req.board.id,
     );
     if (!ensureColumn) throw ApiError.badRequest("Invalid Column");
 
-    console.log("TASK", task);
-
-    const prevRes = await Task.getColumnIdMove(req.params.taskId, req.board.id);
-    if (!prevRes.length) throw ApiError.notFound("Task not found..");
+    const prevRes = await Task.getColumnIdMove(
+      req.params.tasksId,
+      req.board.id,
+    );
+    if (!prevRes) throw ApiError.notFound("Task not found..");
     const movedColumn = prevRes.column_id !== column_id;
 
     const moveTask = await Task.moveTask(
-      req.params.taskId,
+      req.params.tasksId,
       req.board.id,
       column_id,
       position,
     );
 
-    const task = await Task.fetchTask(moveTask.id);
+    const colRes = await Task.getMoveColumnById(column_id);
+    if (!colRes) throw ApiError.badRequest("Invalid Column missing");
+
+    const fetchedTask = await Task.fetchTask(moveTask.id);
+    const task = {
+      ...fetchedTask,
+      columnTitle: colRes.title,
+    };
     emitToBoard(req.board.id, "task:moved", task);
 
     if (movedColumn) {
-      const colRes = await Task.getMoveColumnById(column_id);
       await logActivity({
         boardId: req.board.id,
         userId: req.user.id,

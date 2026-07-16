@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import toast from "react-hot-toast";
-import { Trash2, GitBranch, Loader2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import Modal from "../ui/Modal";
 import Button from "../ui/Button";
 import { Input, Textarea, Select } from "../ui/Input";
@@ -30,30 +30,23 @@ const TaskModal = ({
   columns,
   members,
   actions,
-  onBreakdown,
 }) => {
   const isEdit = Boolean(task);
-  const [form, setForm] = useState(empty(defaultColumnId));
+  const [form, setForm] = useState(() =>
+    task
+      ? {
+          title: task.title || "",
+          description: task.description || "",
+          priority: task.priority || "medium",
+          due_date: toDateInput(task.due_date),
+          assignee_id: task.assigned_id || "",
+          column_id: task.column_id,
+        }
+      : empty(defaultColumnId || columns[0]?.id),
+  );
   const [saving, setSaving] = useState(false);
-  const [breakingDown, setBreakingDown] = useState(false);
 
   const deleteTimers = useRef(new Map());
-
-  useEffect(() => {
-    if (!open) return;
-    if (task) {
-      setForm({
-        title: task.title || "",
-        description: task.description || "",
-        priority: task.priority || "medium",
-        due_date: toDateInput(task.due_date),
-        assignee_id: task.assigned_id || "",
-        column_id: task.column_id,
-      });
-    } else {
-      setForm(empty(defaultColumnId || columns[0]?.id));
-    }
-  }, [open, task, defaultColumnId, columns]);
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -126,15 +119,6 @@ const TaskModal = ({
         duration: 5000,
       },
     );
-  };
-
-  const handleBreakdown = async () => {
-    setBreakingDown(true);
-    try {
-      await onBreakdown(task);
-    } finally {
-      setBreakingDown(false);
-    }
   };
 
   return (
@@ -222,23 +206,8 @@ const TaskModal = ({
             )}
           </div>
           <div className="flex gap-2">
-            {isEdit && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleBreakdown}
-                disabled={breakingDown}
-              >
-                {breakingDown ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <GitBranch className="h-4 w-4" />
-                )}
-                AI breakdown
-              </Button>
-            )}
             <Button type="submit" loading={saving}>
-              {isEdit ? "Save" : "Create task"}
+              {isEdit ? "Save task" : "Create task"}
             </Button>
           </div>
         </div>

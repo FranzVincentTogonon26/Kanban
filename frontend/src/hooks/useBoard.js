@@ -1,6 +1,7 @@
+import toast from "react-hot-toast";
 import { useCallback, useEffect, useState } from "react";
 import { boardApi, columnApi, taskApi } from "../lib/api";
-import toast from "react-hot-toast";
+import { connecSocket } from "../lib/socket";
 
 export const useBoard = (boardId) => {
   const [board, setBoard] = useState(null);
@@ -114,7 +115,11 @@ export const useBoard = (boardId) => {
       if (!prev) return;
       upsertTask({ ...prev, column_id: columnId, position });
       try {
-        await taskApi.move(boardId, taskId, { column_id: columnId, position });
+        const moveTask = await taskApi.move(boardId, taskId, {
+          column_id: columnId,
+          position,
+        });
+        toast.success(`${moveTask.title} moved to ${moveTask.columnTitle}`);
       } catch (err) {
         upsertTask(prev);
         toast.error(err.message);
@@ -122,6 +127,90 @@ export const useBoard = (boardId) => {
     },
     [boardId, tasks, upsertTask],
   );
+
+  const deleteColumn = useCallback(
+    async (column) => {
+      try {
+        await columnApi.remove(boardId, column.id);
+        setColumns((p) => p.filter((c) => c.id !== column.id));
+        setTasks((p) => p.filter((t) => t.column_id !== column.id));
+        toast.success(`${column.title} column deleted..`);
+      } catch (err) {
+        toast.error(err.message);
+      }
+    },
+    [boardId],
+  );
+
+  const renameColumn = useCallback(
+    async (columnId, title) => {
+      setColumns((p) =>
+        p.map((c) => (c.id === columnId ? { ...c, title } : c)),
+      );
+      try {
+        await columnApi.update(boardId, columnId, { title });
+        toast.success("Column Updated");
+      } catch (err) {
+        toast.error(err.message);
+      }
+    },
+    [boardId],
+  );
+
+  // Real-time sync
+  useEffect(() => {
+    const socket = connecSocket();
+    socket.emit("board:join", boardId);
+
+    const onCreated = (t) => upsertTask(t);
+    const onUpdated = (t) => upsertTask(t);
+    const onMoved = (t) => upsertTask(t);
+    const onDeleted = ({ id }) => removeTaskLocal(id);
+    const onColCreated = (c) =>
+      setColumns((p) => [...p, c].sort((a, b) => a.position - b.position));
+    const onColUpdated = (c) =>
+      setColumns((p) =>
+        p
+          .map((x) => (x.id === c.id ? c : x))
+          .sort((a, b) => a.position - b.position),
+      );
+    const onColDeleted = ({ id }) =>
+      setColumns((p) => p.filter((x) => x.id !== id));
+    const onBoardUpdated = (b) => setBoard(b);
+    const onPresenceSync = ({ users }) => setPresence(users || []);
+    const onPresenceJoin = ({ user }) =>
+      setPresence((p) => (p.find((u) => u.id === user.id) ? p : [...p, user]));
+    const onPresenceLeave = ({ user }) =>
+      setPresence((p) => p.filter((u) => u.id !== user.id));
+
+    socket.on("task:created", onCreated);
+    socket.on("task:updated", onUpdated);
+    socket.on("task:moved", onMoved);
+    socket.on("task:deleted", onDeleted);
+    socket.on("column:created", onColCreated);
+    socket.on("column:updated", onColUpdated);
+    socket.on("column:deleted", onColDeleted);
+    socket.on("board:updated", onBoardUpdated);
+    socket.on("presence:sync", onPresenceSync);
+    socket.on("presence:join", onPresenceJoin);
+    socket.on("presence:leave", onPresenceLeave);
+
+    return () => {
+      socket.emit("board:leave", boardId);
+      socket.off("task:created", onCreated);
+      socket.off("task:updated", onUpdated);
+      socket.off("task:moved", onMoved);
+      socket.off("task:deleted", onDeleted);
+      socket.off("column:created", onColCreated);
+      socket.off("column:updated", onColUpdated);
+      socket.off("column:deleted", onColDeleted);
+      socket.off("board:updated", onBoardUpdated);
+      socket.off("presence:sync", onPresenceSync);
+      socket.off("presence:join", onPresenceJoin);
+      socket.off("presence:leave", onPresenceLeave);
+      setPresence([]);
+    };
+  }, [boardId, upsertTask, removeTaskLocal]);
 
   return {
     board,
@@ -138,9 +227,9 @@ export const useBoard = (boardId) => {
     updateTask,
     deleteTask,
     moveTask,
-    // upsertTask,
+    upsertTask,
     addColumn,
-    // renameColumn,
-    // deleteColumn,
+    renameColumn,
+    deleteColumn,
   };
 };

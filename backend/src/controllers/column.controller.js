@@ -1,5 +1,5 @@
 import Column from "../models/column.model.js";
-import { emitToBoard } from "../realtime/index.js";
+import { emitToBoard, logActivity } from "../realtime/index.js";
 import ApiError from "../utils/ApiError.js";
 import { addColumnSchema } from "../validations/column.validation.js";
 
@@ -26,16 +26,27 @@ export const createColumn = async (req, res, next) => {
 export const updateColumn = async (req, res, next) => {
   try {
     const { title, position } = req.body;
-    const column = await Column.updateColumn(
+
+    const column = await Column.getColumn(req.params.columnId, req.board.id);
+    if (!column) throw ApiError.notFound("Column not found");
+
+    const updateColumn = await Column.updateColumn(
       req.params.columnId,
       req.board.id,
       title,
       position,
     );
 
-    if (!column.length) throw ApiError.notFound("Column not found");
-    emitToBoard(req.board.id, "column:updated", column);
-    res.json({ column: column });
+    emitToBoard(req.board.id, "column:updated", updateColumn);
+    await logActivity({
+      boardId: req.board.id,
+      userId: req.user.id,
+      action: "column.updated",
+      message: `${req.user.name} rename "${column.title}" to "${title}"`,
+      metadata: { columnId: column.id },
+    });
+
+    res.json({ column: updateColumn });
   } catch (err) {
     next(err);
   }

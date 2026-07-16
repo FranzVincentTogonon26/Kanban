@@ -98,7 +98,7 @@ const ActivityFeed = ({ open, onClose, boardId }) => {
                         size="xs"
                       />
                       <div className="min-w-0">
-                        <p className="text-sm leading-snug text-muted">
+                        <p className="text-xs leading-snug text-muted">
                           {a.message}
                         </p>
                         <p className="mt-0.5 text-[11px] text-faint">

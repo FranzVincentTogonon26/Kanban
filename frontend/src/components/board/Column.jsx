@@ -74,7 +74,7 @@ const Column = ({
             onChange={(e) => setTitle(e.target.value)}
             onBlur={commitRename}
             onKeyDown={(e) => e.key === "Enter" && commitRename()}
-            className="w-full rounded bg-surface px-2 py-0.5 text-sm font-semibold outline-none"
+            className="w-full rounded bg-surface  px-2 py-0.5 text-sm font-semibold outline-none"
           />
         ) : (
           <h3
@@ -159,7 +159,7 @@ const Column = ({
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
         onConfirm={() => {
-          onDelete(column.id);
+          onDelete(column);
           setConfirmOpen(false);
         }}
         title="Delete column?"

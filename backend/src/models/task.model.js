@@ -27,6 +27,19 @@ class Task {
     return result.rows[0];
   }
 
+  // Moved task
+  static async moveTask(tasksId, boardId, column_id, position) {
+    const result = await query(
+      `
+      UPDATE tasks
+        SET column_id = $3, position = $4, updated_at = now()
+      WHERE id = $1 AND board_id = $2 RETURNING id`,
+      [tasksId, boardId, column_id, position],
+    );
+
+    return result.rows[0];
+  }
+
   //List task
   static async listTask(boardId, priority, assignee, column, q) {
     const filters = ["t.board_id = $1"];
