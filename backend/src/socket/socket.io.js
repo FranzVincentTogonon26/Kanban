@@ -25,6 +25,7 @@ export const initSocket = (httpServer) => {
         id: decoded.id,
         name: decoded.name,
         email: decoded.email,
+        role: "testingRole",
       };
       socket.data.user = socket.user;
 
@@ -50,11 +51,12 @@ export const initSocket = (httpServer) => {
         socket.join(room);
 
         socket.to(room).emit("presence:join", {
-          user: { id: user.id, name: user.name },
+          user: { id: user.id, name: user.name, email: user.email },
           boardId,
         });
 
         const sockets = await io.in(room).fetchSockets();
+
         const seen = new Set([user.id]);
         const viewers = [];
 
@@ -63,7 +65,8 @@ export const initSocket = (httpServer) => {
 
           if (!u || seen.has(u.id)) continue;
           seen.add(u.id);
-          viewers.push({ id: u.id, name: u.name });
+
+          viewers.push({ id: u.id, name: u.name, email: u.email });
         }
 
         socket.emit("presence:sync", { boardId, users: viewers });

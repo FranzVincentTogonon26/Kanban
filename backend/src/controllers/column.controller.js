@@ -17,6 +17,13 @@ export const createColumn = async (req, res, next) => {
     const column = await Column.createColumn(req.board.id, title);
 
     emitToBoard(req.board.id, "column:created", column);
+    await logActivity({
+      boardId: req.board.id,
+      userId: req.user.id,
+      action: "column.created",
+      message: `${req.user.name} create "${title}" column`,
+      metadata: { columnId: column.id },
+    });
     res.status(201).json({ column: column });
   } catch (err) {
     next(err);
@@ -54,9 +61,22 @@ export const updateColumn = async (req, res, next) => {
 
 export const deleteColumn = async (req, res, next) => {
   try {
-    const column = await Column.deleteColumn(req.params.columnId, req.board.id);
-    if (!column.length) throw ApiError.notFound("Column not found");
+    const column = await Column.getColumn(req.params.columnId, req.board.id);
+    if (!column) throw ApiError.notFound("Column not found");
+
+    const delteteColumn = await Column.deleteColumn(
+      req.params.columnId,
+      req.board.id,
+    );
+
     emitToBoard(req.board.id, "column:deleted", column);
+    await logActivity({
+      boardId: req.board.id,
+      userId: req.user.id,
+      action: "column.deleted",
+      message: `${req.user.name} delete "${column.title}" column`,
+      metadata: { columnId: column.id },
+    });
     res.json({ success: true });
   } catch (err) {
     next(err);

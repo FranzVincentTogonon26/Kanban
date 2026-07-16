@@ -25,6 +25,7 @@ import TaskModal from "../components/board/TaskModal";
 
 // import { aiApi } from "../lib/api";
 import PromptDialog from "../components/ui/PromptDialog";
+import MembersPresenceModal from "../components/board/MembersPresenceModal";
 
 const BoardPage = () => {
   const { boardId } = useParams();
@@ -40,6 +41,7 @@ const BoardPage = () => {
   const [aiGen, setAiGen] = useState({ open: false, columnId: null });
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [membersOpen, setMembersOpen] = useState(false);
+  const [membersPresenceOpen, setMembersPresenceOpen] = useState(false);
   const [activityOpen, setActivityOpen] = useState(false);
   const [addColumnOpen, setAddColumnOpen] = useState(false);
 
@@ -70,9 +72,14 @@ const BoardPage = () => {
   const actions = (
     <div className="flex items-center gap-2">
       {getBoard.presence.length > 0 && (
-        <div className="mr-1 hidden items-center gap-2 sm:flex">
-          <span className="text-[11px] text-faint">Viewing</span>
-          <AvatarStack users={getBoard.presence} size="xs" max={3} />
+        <div className=" hidden items-center gap-1 sm:flex">
+          <Button
+            size="xs"
+            variant="ghost"
+            onClick={() => setMembersPresenceOpen(true)}
+          >
+            <AvatarStack users={getBoard.presence} size="xs" max={3} />
+          </Button>
         </div>
       )}
       <Button
@@ -242,6 +249,12 @@ const BoardPage = () => {
         setMembers={getBoard.setMembers}
         canManage={canManage}
         ownerId={getBoard.board?.[0].owner_id}
+      />
+
+      <MembersPresenceModal
+        open={membersPresenceOpen}
+        onClose={() => setMembersPresenceOpen(false)}
+        membersPresence={getBoard.presence}
       />
 
       {addColumnOpen && (

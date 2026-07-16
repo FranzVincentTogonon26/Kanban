@@ -7,7 +7,7 @@ let socket = null;
 
 export const getSocket = () => {
   if (!socket) {
-    socket = io.apply(URL, {
+    socket = io(URL, {
       autoConnect: false,
       auth: { token: getToken() },
       transports: ["websocket"],
