@@ -16,6 +16,16 @@ class Column {
     return result.rows[0];
   }
 
+  // Get move column id
+  static async getColumn(columnId, boardId) {
+    const result = await query(
+      "SELECT id, title FROM columns WHERE id = $1 AND board_id = $2",
+      [columnId, boardId],
+    );
+
+    return result.rows[0];
+  }
+
   //   Update column
   static async updateColumn(columnId, boardId, title, position) {
     const result = await query(

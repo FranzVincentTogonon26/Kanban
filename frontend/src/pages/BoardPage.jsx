@@ -20,6 +20,12 @@ import { FilterSelect } from "../components/ui/Input";
 import { PRIORITIES } from "../lib/utils";
 import { ColumnSkeleton } from "../components/ui/Skeleton";
 import KanbanBoard from "../components/board/KanbanBoard";
+import TaskModal from "../components/board/TaskModal";
+// import toast from "react-hot-toast";
+
+// import { aiApi } from "../lib/api";
+import PromptDialog from "../components/ui/PromptDialog";
+import MembersPresenceModal from "../components/board/MembersPresenceModal";
 
 const BoardPage = () => {
   const { boardId } = useParams();
@@ -35,6 +41,7 @@ const BoardPage = () => {
   const [aiGen, setAiGen] = useState({ open: false, columnId: null });
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [membersOpen, setMembersOpen] = useState(false);
+  const [membersPresenceOpen, setMembersPresenceOpen] = useState(false);
   const [activityOpen, setActivityOpen] = useState(false);
   const [addColumnOpen, setAddColumnOpen] = useState(false);
 
@@ -45,7 +52,7 @@ const BoardPage = () => {
   const filteredTasks = useMemo(() => {
     return getBoard.tasks.filter((t) => {
       if (filterPriority && t.priority !== filterPriority) return false;
-      if (filterAssignee && t.assignee_id !== filterAssignee) return false;
+      if (filterAssignee && t.assigned_id !== filterAssignee) return false;
       if (search) {
         const q = search.toLowerCase();
         if (
@@ -65,9 +72,14 @@ const BoardPage = () => {
   const actions = (
     <div className="flex items-center gap-2">
       {getBoard.presence.length > 0 && (
-        <div className="mr-1 hidden items-center gap-2 sm:flex">
-          <span className="text-[11px] text-faint">Viewing</span>
-          <AvatarStack users={getBoard.presence} size="xs" max={3} />
+        <div className=" hidden items-center gap-1 sm:flex">
+          <Button
+            size="xs"
+            variant="ghost"
+            onClick={() => setMembersPresenceOpen(true)}
+          >
+            <AvatarStack users={getBoard.presence} size="xs" max={3} />
+          </Button>
         </div>
       )}
       <Button
@@ -174,7 +186,7 @@ const BoardPage = () => {
               setFilterAssignee("");
               setSearch("");
             }}
-            className="rounded-full px-3 py-1.5 text-sm font-medium text-faint transition-colors hover:bg-surface-2 hover:text-ink"
+            className="rounded-full px-3 py-1.5 text-sm font-medium text-muted bg-surface-2 transition-colors hover:bg-priority-urgent/10 hover:text-priority-urgent"
           >
             Clear
           </button>
@@ -185,7 +197,7 @@ const BoardPage = () => {
       </div>
 
       {/* Board */}
-      <div className="flex-1 overflow-hidden pt-4">
+      <div className="flex-1 overflow-hidden pt-5">
         {getBoard.loading ? (
           <div className="flex gap-4 px-6">
             {[0, 1, 2, 3].map((i) => (
@@ -209,6 +221,20 @@ const BoardPage = () => {
         )}
       </div>
 
+      {/* Modals */}
+      <TaskModal
+        key={taskModal.task?.id ?? `new-${taskModal.columnId ?? "default"}`}
+        open={taskModal.open}
+        onClose={() =>
+          setTaskModal({ open: false, task: null, columnId: null })
+        }
+        task={taskModal.task}
+        defaultColumnId={taskModal.columnId}
+        columns={getBoard.columns}
+        members={getBoard.members}
+        actions={getBoard}
+      />
+
       <ActivityFeed
         open={activityOpen}
         onClose={() => setActivityOpen(false)}
@@ -224,6 +250,28 @@ const BoardPage = () => {
         canManage={canManage}
         ownerId={getBoard.board?.[0].owner_id}
       />
+
+      <MembersPresenceModal
+        open={membersPresenceOpen}
+        onClose={() => setMembersPresenceOpen(false)}
+        membersPresence={getBoard.presence}
+      />
+
+      {addColumnOpen && (
+        <PromptDialog
+          open
+          onClose={() => setAddColumnOpen(false)}
+          title="Add column"
+          description="Give your new column a name."
+          label="Column name"
+          placeholder="e.g. Backlog"
+          submitLabel="Add column"
+          onSubmit={(name) => {
+            getBoard.addColumn(name);
+            setAddColumnOpen(false);
+          }}
+        />
+      )}
     </>
   );
 };

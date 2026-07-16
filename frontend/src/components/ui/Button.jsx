@@ -15,6 +15,7 @@ const variants = {
 };
 
 const sizes = {
+  xs: "h-8 px-2 text-xs gap-1.5",
   sm: "h-8 px-3.5 text-xs gap-1.5",
   md: "h-10 px-5 text-sm gap-2",
   lg: "h-12 px-7 text-[15px] gap-2",
@@ -29,11 +30,13 @@ const Button = ({
   loading = false,
   className,
   disabled,
+  title,
   ...props
 }) => (
   <button
+    data-tip={title}
     className={cn(
-      "inline-flex select-none items-center justify-center whitespace-nowrap rounded-full font-semibold transition-all duration-200 ease-[var(--ease-spring)] focus-ring disabled:opacity-50 disabled:pointer-events-none active:scale-[0.97]",
+      "tooltip tooltip-bottom inline-flex select-none items-center justify-center whitespace-nowrap rounded-full font-semibold transition-all duration-200 ease-[var(--ease-spring)] focus-ring disabled:opacity-50 disabled:pointer-events-none active:scale-[0.97]",
       variants[variant],
       sizes[size],
       className,

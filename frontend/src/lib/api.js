@@ -54,3 +54,56 @@ export const boardApi = {
       .delete(`/boards/${id}/members/${userId}`)
       .then((response) => response.data),
 };
+
+export const aiApi = {
+  generateTasks: (boardId, data) =>
+    api
+      .post(`/boards/${boardId}/ai/generate-tasks`, data)
+      .then((response) => response.data),
+  breakdown: (boardId, data) =>
+    api
+      .post(`/boards/${boardId}/ai/breakdown`, data)
+      .then((response) => response.data.subtasks),
+  summary: (boardId) =>
+    api
+      .post(`/boards/${boardId}/ai/summary`)
+      .then((response) => response.data.summary),
+};
+
+export const columnApi = {
+  create: (boardId, data) =>
+    api
+      .post(`/boards/${boardId}/columns`, data)
+      .then((response) => response.data.column),
+  update: (boardId, columnId, data) =>
+    api
+      .patch(`/boards/${boardId}/columns/${columnId}`, data)
+      .then((response) => response.data.column),
+  remove: (boardId, columnId) =>
+    api
+      .delete(`/boards/${boardId}/columns/${columnId}`)
+      .then((response) => response.data),
+};
+
+export const taskApi = {
+  list: (boardId, params) =>
+    api
+      .get(`/boards/${boardId}/tasks`, { params })
+      .then((response) => response.data.tasks),
+  create: (boardId, data) =>
+    api
+      .post(`/boards/${boardId}/tasks`, data)
+      .then((response) => response.data.task),
+  update: (boardId, taskId, data) =>
+    api
+      .patch(`/boards/${boardId}/tasks/${taskId}`, data)
+      .then((response) => response.data.task),
+  move: (boardId, taskId, data) =>
+    api
+      .patch(`/boards/${boardId}/tasks/${taskId}/move`, data)
+      .then((response) => response.data.task),
+  remove: (boardId, taskId) =>
+    api
+      .delete(`/boards/${boardId}/tasks/${taskId}`)
+      .then((response) => response.data),
+};

@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const addTaskSchema = z.object({
-  column_id: z.string().min(2, { message: "Column Id is required" }),
   title: z
     .string({
       required_error: "Task title is required",

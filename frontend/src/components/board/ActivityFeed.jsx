@@ -51,7 +51,7 @@ const ActivityFeed = ({ open, onClose, boardId }) => {
             onClick={onClose}
           />
           <motion.aside
-            className="glass fixed right-0 top-0 z-40 flex h-full w-80 flex-col border-l"
+            className="glass fixed right-0 top-0 z-40 flex h-full w-120 flex-col border-l"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -61,9 +61,9 @@ const ActivityFeed = ({ open, onClose, boardId }) => {
               ease: [0.16, 1, 0.3, 1],
             }}
           >
-            <div className="flex items-center justify-between border-b px-4 py-4">
+            <div className="flex items-center justify-between border-b px-4 py-4 bg-surface/90 backdrop-blur-xl transition-[width] duration-300 ease-[var(--ease-spring)]">
               <h3 className="flex items-center gap-2 font-display text-sm font-semibold tracking-tight">
-                <Activity className="h-4 w-4 text-brand-500" /> Activity
+                <Activity className="h-4 w-4 text-brand-500" /> Activity Logs
               </h3>
               <button
                 onClick={onClose}
@@ -73,7 +73,7 @@ const ActivityFeed = ({ open, onClose, boardId }) => {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3">
+            <div className="flex-1 overflow-y-auto p-3 bg-surface/90 backdrop-blur-xl transition-[width] duration-300 ease-[var(--ease-spring)]">
               {loading ? (
                 <div className="space-y-3">
                   {Array.from({ length: 6 }).map((_, i) => (
@@ -98,7 +98,7 @@ const ActivityFeed = ({ open, onClose, boardId }) => {
                         size="xs"
                       />
                       <div className="min-w-0">
-                        <p className="text-sm leading-snug text-muted">
+                        <p className="text-xs leading-snug text-muted">
                           {a.message}
                         </p>
                         <p className="mt-0.5 text-[11px] text-faint">

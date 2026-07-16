@@ -7,11 +7,10 @@ const sizeMap = {
   lg: "h-11 w-11 text-base",
 };
 
-const Avatar = ({ name, id, src, size = "md", className, title }) => (
+const Avatar = ({ name, id, src, size = "md", className }) => (
   <div
-    title={title || name}
     className={cn(
-      "flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold text-white ring-2 ring-surface",
+      "flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold text-white ring-2 ring-surface ",
       sizeMap[size],
       className,
     )}
