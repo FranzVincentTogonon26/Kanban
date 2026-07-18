@@ -100,3 +100,38 @@ export const formatDueDate = (date) => {
   if (isTomorrow(d)) return { label: "Tomorrow", overdue: false };
   return { label: format(d, "MMM d"), overdue: isPast(d) };
 };
+
+const MONTHS = {
+  Jan: "Jan.",
+  Feb: "Feb.",
+  Mar: "Mar.",
+  Apr: "Apr.",
+  May: "May",
+  Jun: "Jun.",
+  Jul: "Jul.",
+  Aug: "Aug.",
+  Sep: "Sep.",
+  Oct: "Oct.",
+  Nov: "Nov.",
+  Dec: "Dec.",
+};
+
+export const dateFormat = (value) => {
+  if (!value) return "";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const formatted = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+
+  const [month, day, year] = formatted.replace(",", "").split(" ");
+
+  return `${MONTHS[month] ?? month} ${day}, ${year}`;
+};

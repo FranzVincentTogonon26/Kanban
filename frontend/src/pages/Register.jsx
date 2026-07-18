@@ -1,4 +1,4 @@
-import { Zap } from "lucide-react";
+import { KanbanIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "../components/ui/Input";
 import Button from "../components/ui/Button";
@@ -23,7 +23,7 @@ const Register = () => {
       toast.success("Account created!.");
       navigate("/dashboard", { replace: true });
     } catch (err) {
-      toast.err(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -38,10 +38,10 @@ const Register = () => {
             className="mb-8 flex items-center justify-center gap-2.5 font-semibold"
           >
             <div className="brand-gradient flex h-10 w-10 items-center justify-center rounded-2xl shadow-[var(--shadow-brand)]">
-              <Zap className="h-5 w-5 fill-white text-white" />
+              <KanbanIcon className="h-5 w-5 fill-white text-white" />
             </div>
             <span className="font-display text-lg font-bold tracking-tight">
-              Flowboard
+              Kanflow
             </span>
           </Link>
 
@@ -50,14 +50,14 @@ const Register = () => {
               Create your account
             </h1>
             <p className="mt-1.5 text-sm text-muted">
-              Start managing projects with AI.
+              Start managing projects.
             </p>
 
             <form onSubmit={onSubmit} className="mt-6 space-y-4">
               <Input
                 id="name"
                 label="Full name"
-                placeholder="John Doe"
+                placeholder="Juan Dela Cruz"
                 autoComplete="name"
                 required
                 value={form.name}
@@ -67,7 +67,7 @@ const Register = () => {
                 id="email"
                 label="Email"
                 type="email"
-                placeholder="you@company.com"
+                placeholder="juandelacruz@email.com"
                 autoComplete="email"
                 required
                 value={form.email}
@@ -107,8 +107,8 @@ const Register = () => {
       </div>
 
       <AuthAside
-        title="Start shipping with AI"
-        subtitle="Join 2,500+ teams turning one-line goals into shipped work."
+        title="Get started with Kanflow"
+        subtitle="Create your workspace, collaborate with your team, and turn ideas into completed work."
       />
     </div>
   );

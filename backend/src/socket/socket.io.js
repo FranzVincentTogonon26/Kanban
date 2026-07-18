@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 
 import { ENV } from "../config/env.js";
+import User from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
 import jwtToken from "../utils/jwt.js";
 import SocketIO from "../models/socet.io.model.js";
@@ -15,7 +16,7 @@ export const initSocket = (httpServer) => {
     },
   });
 
-  io.use((socket, next) => {
+  io.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth?.token;
       if (!token) throw ApiError.unauthorized("Authentication required");

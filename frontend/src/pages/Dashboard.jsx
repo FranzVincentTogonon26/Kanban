@@ -1,12 +1,10 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   ArrowUpRight,
   CheckSquare,
-  Crown,
   FolderKanban,
   KanbanIcon,
   LayoutGrid,
-  Share2,
   Users,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -21,7 +19,11 @@ import { BoardCardSkeleton } from "../components/ui/Skeleton";
 const Dashboard = () => {
   const { openCreateBoard } = useLayout();
   const { user } = useAuth();
-  const { boards, loading } = useBoards();
+  const { boards, loading, refresh } = useBoards();
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   const stats = useMemo(() => {
     const totalTasks = boards.reduce(
@@ -35,9 +37,6 @@ const Dashboard = () => {
 
   const avgPerBoard = stats.total
     ? Math.round(stats.totalTasks / stats.total)
-    : 0;
-  const ownedPct = stats.total
-    ? Math.round((stats.owned / stats.total) * 100)
     : 0;
 
   // Real per-board task distributions feeding the KPI mini bar charts.
@@ -76,7 +75,7 @@ const Dashboard = () => {
           </div>
 
           {/* KPIs */}
-          <div className="mb-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mb-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-2">
             <KpiCard
               featured
               label="Total boards"
@@ -91,20 +90,6 @@ const Dashboard = () => {
               hint={`${avgPerBoard} avg per board`}
               trend={trends.tasks}
               icon={CheckSquare}
-            />
-            <KpiCard
-              label="Owned by you"
-              value={stats.owned}
-              hint={`${ownedPct}% of workspace`}
-              trend={trends.owned}
-              icon={Crown}
-            />
-            <KpiCard
-              label="Shared with you"
-              value={stats.shared}
-              hint="From your teammates"
-              trend={trends.shared}
-              icon={Share2}
             />
           </div>
 

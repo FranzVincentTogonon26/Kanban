@@ -36,6 +36,14 @@ export const authApi = {
   me: () => api.get("/auth/me").then((response) => response.data.user),
 };
 
+export const userApi = {
+  list: () => api.get("/users/list").then((response) => response.data.users),
+  update: (userId, data) =>
+    api.patch(`/users/${userId}`, { params: { data } }).then((response) => response.data.users),
+  delete: (userId) =>
+    api.delete(`/users/${userId}`).then((response) => response.data.users),
+};
+
 export const boardApi = {
   list: () => api.get("/boards").then((response) => response.data.boards),
   create: (data) =>

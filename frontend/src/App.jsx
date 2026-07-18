@@ -10,6 +10,9 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import BoardPage from "./pages/BoardPage";
+import Accounts from "./pages/Accounts";
+import Team from "./pages/Team";
+import MyTasks from "./pages/MyTasks";
 
 const App = () => (
   <BrowserRouter>
@@ -45,7 +48,10 @@ const App = () => (
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/my-tasks" element={<MyTasks />} />
+          <Route path="/team" element={<Team />} />
           <Route path="/board/:boardId" element={<BoardPage />} />
+          <Route path="/accounts" element={<Accounts />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
 

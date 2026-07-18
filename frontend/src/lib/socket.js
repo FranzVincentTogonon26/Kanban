@@ -20,9 +20,13 @@ export const connecSocket = () => {
   const socket = getSocket();
   socket.auth = { token: getToken() };
   if (!socket.connected) socket.connect();
+
   return socket;
 };
 
 export const disconnectSocket = () => {
-  if (socket) socket.disconnect();
+  if (socket) {
+    socket.off("force:logout");
+    socket.disconnect();
+  }
 };

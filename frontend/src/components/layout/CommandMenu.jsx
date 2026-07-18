@@ -1,7 +1,6 @@
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Calendar,
   CheckSquare,
   CornerDownLeft,
   LayoutDashboard,
@@ -12,16 +11,19 @@ import {
   Users,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useBoards } from "../../hooks/useContext";
+import { useAuth, useBoards } from "../../hooks/useContext";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
 
 const CommandMenu = ({ open, onClose, onCreateBoard }) => {
+  const { user } = useAuth();
   const { boards } = useBoards();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const inputRef = useRef(null);
+
+  const isAdmin = user?.role?.toLowerCase() === "admin";
 
   useEffect(() => {
     if (!open) return;
@@ -35,12 +37,16 @@ const CommandMenu = ({ open, onClose, onCreateBoard }) => {
 
   const items = useMemo(() => {
     const actions = [
-      {
-        id: "create",
-        label: "Create new board",
-        icon: Plus,
-        onSelect: onCreateBoard,
-      },
+      ...(isAdmin
+        ? [
+            {
+              id: "create",
+              label: "Create new board",
+              icon: Plus,
+              onSelect: onCreateBoard,
+            },
+          ]
+        : []),
       {
         id: "dashboard",
         label: "Go to dashboard",
@@ -52,12 +58,6 @@ const CommandMenu = ({ open, onClose, onCreateBoard }) => {
         label: "Go to My Tasks",
         icon: CheckSquare,
         onSelect: () => navigate("/my-tasks"),
-      },
-      {
-        id: "calendar",
-        label: "Go to Calendar",
-        icon: Calendar,
-        onSelect: () => navigate("/calendar"),
       },
       {
         id: "team",

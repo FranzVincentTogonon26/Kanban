@@ -1,13 +1,33 @@
-import { Bell, Command, Plus, Search } from "lucide-react";
-import { useLayout } from "../../hooks/useContext";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Bell, ChevronDown, Command, LogOut, Plus, Search } from "lucide-react";
+
+import { useAuth, useLayout } from "../../hooks/useContext";
+
 import Button from "../ui/Button";
+import Avatar from "../ui/Avatar";
 
 const Topbar = ({ title, subtitle, actions, onCreateBoard }) => {
+  const ref = useRef(null);
+  const { user, logout } = useAuth();
   const { openCommand } = useLayout();
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
+  const isAdmin = user?.role?.toLowerCase() === "admin";
   const capitalizedSubtitle = subtitle
     ? subtitle.charAt(0).toUpperCase() + subtitle.slice(1)
     : "";
+
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e) => {
+      if (!ref.current?.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [menuOpen]);
 
   return (
     <header className="sticky top-0 z-20 flex h-[72px] items-center gap-4 border-b px-6">
@@ -44,13 +64,54 @@ const Topbar = ({ title, subtitle, actions, onCreateBoard }) => {
           <Bell className="h-4.5 w-4.5" />
         </button>
 
-        <Button
-          size="md"
-          onClick={onCreateBoard}
-          className="hidden sm:inline-flex"
-        >
-          <Plus className="h-4 w-4" /> New board
-        </Button>
+        {isAdmin && (
+          <Button
+            size="md"
+            onClick={onCreateBoard}
+            className="hidden sm:inline-flex"
+          >
+            <Plus className="h-4 w-4" /> New board
+          </Button>
+        )}
+
+        <div className="relative" ref={ref}>
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            className="flex items-center gap-2 rounded-full border border-line bg-surface py-1 pl-1 pr-2.5 shadow-[var(--shadow-card)] transition-all duration-200 hover:border-brand-300 hover:shadow-[var(--shadow-soft)]"
+          >
+            <Avatar
+              name={user?.name}
+              id={user?.id}
+              src={user?.avatar_url}
+              size="sm"
+            />
+            <span className="hidden max-w-[7rem] truncate text-sm font-medium text-ink lg:block">
+              {user?.name?.split(" ")[0]}
+            </span>
+            <ChevronDown className="h-4 w-4 text-faint" />
+          </button>
+
+          {menuOpen && (
+            <div className="card animate-in absolute right-0 mt-2 w-56 rounded-2xl p-1.5 shadow-[var(--shadow-lift)]">
+              <div className="px-3 py-2">
+                <p className="truncate text-sm font-semibold text-ink">
+                  {user?.name}
+                </p>
+                <p className="truncate text-xs text-faint">{user?.email}</p>
+              </div>
+              <div className="my-1 border-t" />
+              <button
+                onClick={() => {
+                  logout();
+                  navigate("/login");
+                }}
+                className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-priority-urgent transition-colors hover:bg-surface-2"
+              >
+                <LogOut className="h-4 w-4" /> Log out
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

@@ -1,40 +1,81 @@
 import bcrypt from "bcryptjs";
 
-import ApiError from "../utils/ApiError.js";
 import User from "../models/user.model.js";
-import { loginSchema, registerSchema } from "../validations/auth.validation.js";
+import ApiError from "../utils/ApiError.js";
 import jwtToken from "../utils/jwt.js";
+import { loginSchema, registerSchema } from "../validations/auth.validation.js";
+
+const validate = (schema, payload) => {
+  const result = schema.safeParse(payload);
+
+  if (!result.success) {
+    throw ApiError.badRequest(
+      result.error.issues.map(({ message }) => message).join(", "),
+    );
+  }
+
+  return result.data;
+};
+
+const buildAuthResponse = (user) => ({
+  user: {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  },
+  token: jwtToken.sign({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  }),
+});
+
+const ensureUserCanLogin = (user) => {
+  switch (user.status.toLowerCase()) {
+    case "pending":
+      throw ApiError.unauthorized(
+        "Your account is pending approval. Please wait for an administrator to approve your account.",
+      );
+
+    case "suspended":
+      throw ApiError.unauthorized(
+        "Your account has been suspended. Please contact the administrator.",
+      );
+
+    case "active":
+      return;
+
+    default:
+      throw ApiError.unauthorized("Your account is unavailable.");
+  }
+};
 
 export const register = async (req, res, next) => {
   try {
-    const validationResult = registerSchema.safeParse(req.body);
-    if (!validationResult.success) {
-      const errorMessages = validationResult.error.issues.map(
-        (err) => err.message,
-      );
-      throw ApiError.badRequest(errorMessages.join(", "));
-    }
+    const { name, email, password } = validate(registerSchema, req.body);
 
-    const { name, email, password } = validationResult.data;
     const existingUser = await User.findUserByEmail(email);
+
     if (existingUser) {
-      throw ApiError.conflict("User with this email already exists");
+      throw ApiError.conflict("User with this email already exists.");
     }
 
-    const newUser = await User.createUser({ name, email, password });
-    const token = jwtToken.sign({
-      id: newUser.id,
-      email: newUser.email,
-      name: newUser.name,
+    const user = await User.createUser({
+      name,
+      email,
+      password,
     });
-    res.status(201).json({
-      message: "User created successfully",
-      user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-      },
-      token,
+
+    if (user.status.toLowerCase() !== "active") {
+      return res.status(201).json({
+        message:
+          "Your account has been created and is awaiting administrator approval.",
+      });
+    }
+
+    return res.status(201).json({
+      message: "Account created successfully.",
+      ...buildAuthResponse(user),
     });
   } catch (err) {
     next(err);
@@ -43,40 +84,25 @@ export const register = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-    const validationResult = loginSchema.safeParse(req.body);
-    if (!validationResult.success) {
-      const errorMessages = validationResult.error.issues.map(
-        (err) => err.message,
-      );
-      throw ApiError.badRequest(errorMessages.join(", "));
-    }
+    const { email, password } = validate(loginSchema, req.body);
 
-    const { email, password } = validationResult.data;
     const user = await User.findUserByEmail(email);
 
     if (!user) {
-      throw ApiError.unauthorized("Invalid email or password");
+      throw ApiError.unauthorized("Invalid email or password.");
     }
 
-    const isMatch = await bcrypt.compare(password, user.password_hash);
-    if (!isMatch) {
-      throw ApiError.unauthorized("Invalid email or password");
+    const passwordMatches = await bcrypt.compare(password, user.password_hash);
+
+    if (!passwordMatches) {
+      throw ApiError.unauthorized("Invalid email or password.");
     }
 
-    const token = jwtToken.sign({
-      id: user.id,
-      email: user.email,
-      name: user.name,
-    });
+    ensureUserCanLogin(user);
 
-    res.json({
-      message: "SignIn successfully..",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
-      token,
+    return res.json({
+      message: "Signed in successfully.",
+      ...buildAuthResponse(user),
     });
   } catch (err) {
     next(err);
@@ -86,10 +112,14 @@ export const login = async (req, res, next) => {
 export const getCurrentUser = async (req, res, next) => {
   try {
     const user = await User.findUserById(req.user.id);
+
     if (!user) {
-      throw ApiError.notFound("User not found");
+      throw ApiError.notFound("User not found.");
     }
-    res.json({ user });
+
+    ensureUserCanLogin(user);
+
+    return res.json({ user });
   } catch (err) {
     next(err);
   }

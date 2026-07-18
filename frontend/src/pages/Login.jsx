@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Zap } from "lucide-react";
+import { KanbanIcon } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -41,10 +41,10 @@ const Login = () => {
             className="mb-8 flex items-center justify-center gap-2.5 font-semibold"
           >
             <div className="brand-gradient flex h-10 w-10 items-center justify-center rounded-2xl shadow-[var(--shadow-brand)]">
-              <Zap className="h-5 w-5 fill-white text-white" />
+              <KanbanIcon className="h-5 w-5 fill-white text-white" />
             </div>
             <span className="font-display text-lg font-bold tracking-tight">
-              Flowboard
+              Kanflow
             </span>
           </Link>
 
@@ -52,16 +52,14 @@ const Login = () => {
             <h1 className="font-display text-2xl font-semibold tracking-tight">
               Welcome back
             </h1>
-            <p className="mt-1.5 text-sm text-muted">
-              Log in to your workspace.
-            </p>
+            <p className="mt-1.5 text-sm text-muted">Log in to your account.</p>
 
             <form onSubmit={onSubmit} className="mt-6 space-y-4">
               <Input
                 id="email"
                 label="Email"
                 type="email"
-                placeholder="JohnDoe@email.com"
+                placeholder="juandelacruz@email.com"
                 autoComplete="email"
                 required
                 value={form.email}
@@ -101,8 +99,8 @@ const Login = () => {
       </div>
 
       <AuthAside
-        title="Welcome back to Flowboard"
-        subtitle="Log in and pick up right where you and your team left off."
+        title="Welcome back to Kanflow"
+        subtitle="Log in to continue managing tasks, collaborating with your team, and keeping every project on track."
       />
     </div>
   );

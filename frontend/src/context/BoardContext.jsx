@@ -6,17 +6,38 @@ export const BoardsProvider = ({ children }) => {
   const [boards, setBoards] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const boardList = useCallback(async () => {
+  const refresh = useCallback(async () => {
     try {
-      setBoards(await boardApi.list());
+      const data = await boardApi.list();
+      setBoards(data);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    boardList();
-  }, [boardList]);
+    let mounted = true;
+
+    const loadBoards = async () => {
+      try {
+        const data = await boardApi.list();
+
+        if (mounted) {
+          setBoards(data);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadBoards();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const create = useCallback(async (data) => {
     const board = await boardApi.create(data);
@@ -25,7 +46,14 @@ export const BoardsProvider = ({ children }) => {
   }, []);
 
   return (
-    <BoardsContext.Provider value={{ boards, loading, create }}>
+    <BoardsContext.Provider
+      value={{
+        boards,
+        loading,
+        refresh,
+        create,
+      }}
+    >
       {children}
     </BoardsContext.Provider>
   );

@@ -1,5 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MoreHorizontal, Pencil, Plus, Sparkles, Trash2 } from "lucide-react";
 import {
   SortableContext,
@@ -42,6 +42,15 @@ const Column = ({
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [title, setTitle] = useState(column.title);
   const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e) => {
+      if (!menuRef.current?.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [menuOpen]);
 
   const commitRename = () => {
     setEditing(false);

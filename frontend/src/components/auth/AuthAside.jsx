@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Zap, Sparkles } from "lucide-react";
+import { KanbanIcon } from "lucide-react";
 import AsideKanbanDemo from "./AsideKanbanDemo";
 
 const AuthAside = ({
@@ -65,21 +65,16 @@ const AuthAside = ({
         className="absolute left-8 top-8 z-10 flex items-center gap-2.5 text-white"
       >
         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 ring-1 ring-inset ring-white/20">
-          <Zap className="h-4.5 w-4.5 fill-white text-white" />
+          <KanbanIcon className="h-4.5 w-4.5 fill-white text-white" />
         </span>
         <span className="font-display text-lg font-bold tracking-tight">
-          Flowboard
+          Kanflow
         </span>
       </Link>
 
       <div className="relative z-10 flex w-full flex-col items-center justify-center px-8 text-white">
         {/* live kanban board */}
         <AsideKanbanDemo className="w-full max-w-2xl" />
-
-        {/* AI chip */}
-        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-semibold backdrop-blur">
-          <Sparkles className="h-3.5 w-3.5" /> AI is prioritizing your backlog
-        </div>
 
         {/* copy */}
         <div className="mt-10 max-w-sm text-center">

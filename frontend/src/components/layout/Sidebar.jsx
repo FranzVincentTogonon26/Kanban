@@ -1,19 +1,17 @@
 import {
-  Calendar,
   CheckSquare,
   ChevronLeft,
   ChevronRight,
+  KanbanIcon,
   LayoutDashboard,
-  LogOut,
   Plus,
   Settings,
+  User,
   Users,
-  Zap,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuth, useBoards } from "../../hooks/useContext";
-import Avatar from "../ui/Avatar";
 
 // Section eyebrow (hidden when collapsed)
 const SectionLabel = ({ children, collapsed }) =>
@@ -61,8 +59,9 @@ const NavItem = ({ to, icon: Icon, label, collapsed, badge }) => (
 
 const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
   const { boards, loading } = useBoards();
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const isAdmin = user?.role?.toLowerCase() === "admin";
 
   return (
     <aside
@@ -74,11 +73,11 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
       {/* Header */}
       <div className="flex h-16 items-center gap-2.5 px-3.5">
         <div className="brand-gradient grid h-10 w-10 shrink-0 place-items-center rounded-2xl shadow-[var(--shadow-brand)]">
-          <Zap className="h-5 w-5 fill-white text-white" />
+          <KanbanIcon className="h-5 w-5 fill-white text-white" />
         </div>
         {!collapsed && (
           <span className="flex-1 truncate font-display text-[17px] font-bold tracking-tight text-ink">
-            Flowboard
+            Kanflow
           </span>
         )}
         {!collapsed && (
@@ -118,12 +117,6 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
           label="My Tasks"
           collapsed={collapsed}
         />
-        <NavItem
-          to="/calendar"
-          icon={Calendar}
-          label="Calendar"
-          collapsed={collapsed}
-        />
         <NavItem to="/team" icon={Users} label="Teams" collapsed={collapsed} />
       </nav>
 
@@ -139,13 +132,16 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
             Boards
           </span>
         )}
-        <button
-          onClick={onCreateBoard}
-          title="New board"
-          className="rounded-md p-1 text-faint transition-colors hover:bg-surface-2 hover:text-brand-600"
-        >
-          <Plus className="h-4 w-4" />
-        </button>
+
+        {isAdmin && (
+          <button
+            onClick={onCreateBoard}
+            title="New board"
+            className="rounded-md p-1 text-faint transition-colors hover:bg-surface-2 hover:text-brand-600"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       <div className="mt-1 flex-1 space-y-0.5 px-3 pb-2 no-scrollbar">
@@ -206,55 +202,20 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
 
       {/* General */}
       <SectionLabel collapsed={collapsed}>General</SectionLabel>
-      <nav className="space-y-1 px-3">
+      <nav className="space-y-1 px-3 mb-3">
+        <NavItem
+          to="/accounts"
+          icon={User}
+          label="Accounts"
+          collapsed={collapsed}
+        />
         <NavItem
           to="/settings"
           icon={Settings}
           label="Settings"
           collapsed={collapsed}
         />
-        <button
-          onClick={() => {
-            logout();
-            navigate("/login");
-          }}
-          title={collapsed ? "Log out" : undefined}
-          className={cn(
-            "group flex h-11 w-full items-center rounded-2xl text-sm font-medium text-muted transition-colors duration-200 hover:bg-priority-urgent/10 hover:text-priority-urgent",
-            collapsed ? "mx-auto w-11 justify-center" : "gap-3 px-3",
-          )}
-        >
-          <LogOut className="h-5 w-5 shrink-0" />
-          {!collapsed && (
-            <span className="flex-1 truncate text-left">Log out</span>
-          )}
-        </button>
       </nav>
-
-      {/* User */}
-      <div className="mx-3 mt-3 border-t" />
-      <div
-        className={cn(
-          "flex h-16 items-center",
-          collapsed ? "justify-center px-2" : "gap-3 px-3.5",
-        )}
-      >
-        <Avatar
-          name={user?.name}
-          id={user?.id}
-          src={user?.avatar_url}
-          size="sm"
-          className="shrink-0"
-        />
-        {!collapsed && (
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-ink">
-              {user?.name}
-            </p>
-            <p className="truncate text-xs text-faint">{user?.email}</p>
-          </div>
-        )}
-      </div>
     </aside>
   );
 };

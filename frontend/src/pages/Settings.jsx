@@ -1,6 +1,5 @@
-import { Command, LogOut, Zap } from "lucide-react";
+import { Command, KanbanIcon, LogOut } from "lucide-react";
 import Topbar from "../components/layout/Topbar";
-import Avatar from "../components/ui/Avatar";
 import { useAuth, useLayout } from "../hooks/useContext";
 import Button from "../components/ui/Button";
 import { useNavigate } from "react-router-dom";
@@ -16,9 +15,10 @@ const Card = ({ title, description, children }) => (
 );
 
 const Settings = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { logout } = useAuth();
   const { openCreateBoard } = useLayout();
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -30,24 +30,17 @@ const Settings = () => {
 
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-3xl space-y-5 px-6 py-8 md:px-8">
-          {/* Profile */}
-          <Card
-            title="Profile"
-            description="How you appear across your workspace."
-          >
-            <div className="flex items-center gap-4">
-              <Avatar
-                name={user?.name}
-                id={user?.id}
-                src={user?.avatar_url}
-                size="lg"
-                className="h-16 w-16 text-lg"
-              />
-              <div className="min-w-0">
-                <p className="font-display text-lg font-semibold tracking-tight">
-                  {user?.name}
+          {/* About */}
+          <Card title="About">
+            <div className="flex items-center gap-3">
+              <div className="brand-gradient flex h-10 w-10 items-center justify-center rounded-2xl shadow-[var(--shadow-brand)]">
+                <KanbanIcon className="h-5 w-5 fill-white text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-ink">Kanflow</p>
+                <p className="text-xs text-muted">
+                  AI-powered Kanban · Light theme
                 </p>
-                <p className="truncate text-sm text-muted">{user?.email}</p>
               </div>
             </div>
           </Card>
@@ -60,23 +53,14 @@ const Settings = () => {
                   Jump anywhere, search boards, create tasks.
                 </p>
               </div>
-              <kbd className="flex items-center gap-0.5 rounded-md bg-surface-2 px-2 py-1 text-[11px] font-semibold text-muted">
-                <Command className="h-3 w-3" />K
-              </kbd>
-            </div>
-          </Card>
-
-          {/* About */}
-          <Card title="About">
-            <div className="flex items-center gap-3">
-              <div className="brand-gradient flex h-10 w-10 items-center justify-center rounded-2xl shadow-[var(--shadow-brand)]">
-                <Zap className="h-5 w-5 fill-white text-white" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-ink">Flowboard</p>
-                <p className="text-xs text-muted">
-                  AI-powered Kanban · Light theme
-                </p>
+              <div className="flex justify-end gap-2 items-center">
+                <kbd className="flex items-center gap-0.5 rounded-md bg-surface-2 px-2 py-1 text-[11px] font-semibold text-muted">
+                  CTRL + K
+                </kbd>
+                <span className="text-muted text-xs">or</span>
+                <kbd className="flex items-center gap-0.5 rounded-md bg-surface-2 px-2 py-1 text-[11px] font-semibold text-muted">
+                  <Command className="h-3 w-3" />K
+                </kbd>
               </div>
             </div>
           </Card>

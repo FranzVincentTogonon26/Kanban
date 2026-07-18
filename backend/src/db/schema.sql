@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
     email           VARCHAR(255) UNIQUE NOT NULL,
     password_hash   TEXT NOT NULL,
     avatar_url      TEXT,
+    role            VARCHAR(50) NOT NULL DEFAULT 'member',
+    status          VARCHAR(20) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'suspended', 'pending')),
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
