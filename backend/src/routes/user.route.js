@@ -5,7 +5,6 @@ import * as userController from "../controllers/user.controller.js";
 
 const router = express.Router();
 
-router.get("/search", authMiddleware, userController.searchUsers);
 router.get("/list", authMiddleware, userController.usersList);
 router.delete("/:userId", authMiddleware, userController.deleteUser);
 router.patch("/:userId", authMiddleware, userController.updateUser);

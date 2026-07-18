@@ -59,7 +59,9 @@ export const getBoard = async (req, res, next) => {
 
 export const updateBoard = async (req, res, next) => {
   try {
-    const { title, description, color } = req.body;
+    const title = (req.body.title || "").trim();
+    const description = (req.body.description || "").trim() || null;
+    const color = req.body.color || "#6366f1";
 
     const board = await Board.updateBoard(
       req.board.id,
@@ -77,8 +79,6 @@ export const updateBoard = async (req, res, next) => {
 
 export const deleteBoard = async (req, res, next) => {
   try {
-    if (req.board.role !== "owner")
-      throw ApiError.forbidden("Only the owner can delete this board");
     await Board.deleteBoard(req.board.id);
     emitToBoard(req.board.id, "board:deleted", { id: req.board.id });
     res.json({ success: true });

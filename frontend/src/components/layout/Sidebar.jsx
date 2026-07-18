@@ -169,6 +169,7 @@ const Sidebar = ({ collapsed, onToggle, onCreateBoard }) => {
                     key={b.id}
                     data-tip={collapsed ? b.title : null}
                     to={`/board/${b.id}`}
+                    onDoubleClick={() => onCreateBoard(b)}
                     className={({ isActive }) =>
                       cn(
                         "flex h-10 items-center rounded-2xl text-sm transition-colors duration-200",

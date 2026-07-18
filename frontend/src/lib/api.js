@@ -39,7 +39,9 @@ export const authApi = {
 export const userApi = {
   list: () => api.get("/users/list").then((response) => response.data.users),
   update: (userId, data) =>
-    api.patch(`/users/${userId}`, { params: { data } }).then((response) => response.data.users),
+    api
+      .patch(`/users/${userId}`, { params: { data } })
+      .then((response) => response.data.users),
   delete: (userId) =>
     api.delete(`/users/${userId}`).then((response) => response.data.users),
 };
@@ -53,6 +55,8 @@ export const boardApi = {
     api
       .get(`/boards/${id}/activity`, { params: { limit } })
       .then((response) => response.data.activities),
+  update: (id, data) =>
+    api.patch(`/boards/${id}`, data).then((response) => response.data.board),
   addMember: (id, data) =>
     api
       .post(`/boards/${id}/members`, data)
@@ -61,6 +65,8 @@ export const boardApi = {
     api
       .delete(`/boards/${id}/members/${userId}`)
       .then((response) => response.data),
+  remove: (boardId) =>
+    api.delete(`/boards/${boardId}`).then((response) => response.data),
 };
 
 export const aiApi = {

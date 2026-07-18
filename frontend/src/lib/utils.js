@@ -135,3 +135,8 @@ export const dateFormat = (value) => {
 
   return `${MONTHS[month] ?? month} ${day}, ${year}`;
 };
+
+export const titleCase = (text = "") =>
+  text.replace(/\w\S*/g, (word) => {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });

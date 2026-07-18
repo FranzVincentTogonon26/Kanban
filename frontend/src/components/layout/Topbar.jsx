@@ -19,7 +19,6 @@ const Topbar = ({ title, subtitle, actions, onCreateBoard }) => {
     ? subtitle.charAt(0).toUpperCase() + subtitle.slice(1)
     : "";
 
-
   useEffect(() => {
     if (!menuOpen) return;
     const handler = (e) => {
@@ -28,6 +27,8 @@ const Topbar = ({ title, subtitle, actions, onCreateBoard }) => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [menuOpen]);
+
+
 
   return (
     <header className="sticky top-0 z-20 flex h-[72px] items-center gap-4 border-b px-6">

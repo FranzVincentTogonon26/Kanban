@@ -61,22 +61,7 @@ class User {
   // Delete user
   static async deleteUser(userId) {
     const result = await query("DELETE FROM users WHERE id = $1", [userId]);
-
     return result.rows[0];
-  }
-
-  // Search Users
-  static async searchUsers(query) {
-    const result = await query(
-      `
-      SELECT id, name, email, avatar_url
-      FROM users
-      WHERE name ILIKE $1 OR email ILIKE $1
-      ORDER BY name ASC LIMIT 10`,
-      [`%${query}%`],
-    );
-
-    return result.rows;
   }
 }
 

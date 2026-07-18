@@ -10,8 +10,6 @@ export const useWorkspace = () => {
     members: [],
   });
 
-  // console.log(workspace);
-
   useEffect(() => {
     if (boardsLoading) return;
 

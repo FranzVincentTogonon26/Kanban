@@ -17,7 +17,7 @@ import { useMemo, useState } from "react";
 import ActivityFeed from "../components/board/ActivityFeed";
 import MembersModal from "../components/board/MembersModal";
 import { FilterSelect } from "../components/ui/Input";
-import { PRIORITIES } from "../lib/utils";
+import { PRIORITIES, titleCase } from "../lib/utils";
 import { ColumnSkeleton } from "../components/ui/Skeleton";
 import KanbanBoard from "../components/board/KanbanBoard";
 import TaskModal from "../components/board/TaskModal";
@@ -68,6 +68,8 @@ const BoardPage = () => {
   const canManage =
     getBoard.role.toLowerCase() === "owner" ||
     getBoard.role.toLowerCase() === "admin";
+
+  const board = getBoard.board;
 
   const actions = (
     <div className="flex items-center gap-2">
@@ -125,23 +127,21 @@ const BoardPage = () => {
             >
               <ChevronLeft className="h-4 w-4" />
             </Link>
-            {getBoard.board ? (
+
+            {board ? (
               <>
                 <span
                   className="h-2.5 w-2.5 rounded-full"
-                  style={{ backgroundColor: getBoard.board[0].color }}
+                  style={{ backgroundColor: board.color }}
                 />
-                {getBoard.board[0].title
-                  ?.split(" ")
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(" ")}
+                {titleCase(board.title)}
               </>
             ) : (
-              "Loading…"
+              "Loading..."
             )}
           </span>
         }
-        subtitle={getBoard.board?.[0].description}
+        subtitle={board?.description}
         actions={actions}
         onCreateBoard={openCreateBoard}
       />
@@ -248,7 +248,7 @@ const BoardPage = () => {
         members={getBoard.members}
         setMembers={getBoard.setMembers}
         canManage={canManage}
-        ownerId={getBoard.board?.[0].owner_id}
+        ownerId={getBoard.board?.owner_id}
       />
 
       <MembersPresenceModal

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
 import { BoardsContext } from "./createContext";
 import { boardApi } from "../lib/api";
 
@@ -7,6 +8,7 @@ export const BoardsProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
+    setLoading(true);
     try {
       const data = await boardApi.list();
       setBoards(data);
@@ -16,45 +18,56 @@ export const BoardsProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    let mounted = true;
-
-    const loadBoards = async () => {
+    let ignore = false;
+    const load = async () => {
+      setLoading(true);
       try {
         const data = await boardApi.list();
-
-        if (mounted) {
+        if (!ignore) {
           setBoards(data);
         }
       } finally {
-        if (mounted) {
+        if (!ignore) {
           setLoading(false);
         }
       }
     };
-
-    loadBoards();
-
+    load();
     return () => {
-      mounted = false;
+      ignore = true;
     };
   }, []);
 
-  const create = useCallback(async (data) => {
-    const board = await boardApi.create(data);
+  const createBoard = useCallback(async (payload) => {
+    const board = await boardApi.create(payload);
     setBoards((prev) => [board, ...prev]);
     return board;
   }, []);
 
+  const updateBoard = useCallback(async (id, payload) => {
+    const board = await boardApi.update(id, payload);
+    setBoards((prev) => prev.map((item) => (item.id === id ? board : item)));
+    return board;
+  }, []);
+
+  const deleteBoard = useCallback(async (id) => {
+    await boardApi.remove(id);
+    setBoards((prev) => prev.filter((item) => item.id !== id));
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      boards,
+      loading,
+      refresh,
+      createBoard,
+      updateBoard,
+      deleteBoard,
+    }),
+    [boards, loading, refresh, createBoard, updateBoard, deleteBoard],
+  );
+
   return (
-    <BoardsContext.Provider
-      value={{
-        boards,
-        loading,
-        refresh,
-        create,
-      }}
-    >
-      {children}
-    </BoardsContext.Provider>
+    <BoardsContext.Provider value={value}>{children}</BoardsContext.Provider>
   );
 };

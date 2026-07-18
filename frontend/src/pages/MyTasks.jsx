@@ -27,14 +27,10 @@ const MyTasks = () => {
   const [search, setSearch] = useState("");
   const [now] = useState(() => Date.now());
 
-  //   console.log(tasks);
-
   const mine = useMemo(
     () => tasks.filter((t) => t.assigned_id && t.assigned_id === user?.id),
     [tasks, user],
   );
-
-  //   console.log(mine);
 
   const stats = useMemo(() => {
     let overdue = 0;
@@ -61,8 +57,6 @@ const MyTasks = () => {
     );
     return [...map.values()];
   }, [mine]);
-
-  //   console.log(boardsInPlay);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();

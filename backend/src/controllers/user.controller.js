@@ -1,22 +1,13 @@
 import ApiError from "../utils/ApiError.js";
 import User from "../models/user.model.js";
 
-export const searchUsers = async (req, res, next) => {
-  try {
-    const query = (req.query.q || "").trim();
-    if (query.length < 2) return res.json({ users: [] });
-
-    const users = await User.searchUsers(query);
-    res.json({ users: users });
-  } catch (err) {
-    next(err);
-  }
-};
-
 export const usersList = async (req, res, next) => {
   try {
-    const users = await User.usersList();
+    const isAdmin = await User.findUserById(req.user.id);
+    if (!isAdmin.role.toLowerCase() === "admin")
+      throw ApiError.forbidden("Only the admin can see members list");
 
+    const users = await User.usersList();
     if (!users) {
       throw ApiError.notFound("No users found.");
     }
