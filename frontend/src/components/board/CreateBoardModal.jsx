@@ -65,6 +65,7 @@ const Form = ({ board, isEdit, onClose }) => {
   };
 
   const handleDelete = async () => {
+    setLoading(true);
     const timer = setTimeout(async () => {
       try {
         await deleteBoard(board.id);
@@ -74,6 +75,7 @@ const Form = ({ board, isEdit, onClose }) => {
         toast.error(err.message);
       } finally {
         deleteTimers.current.delete(board.id);
+        setLoading(false);
       }
     }, 5000);
 
@@ -156,6 +158,7 @@ const Form = ({ board, isEdit, onClose }) => {
               variant="ghost"
               onClick={handleDelete}
               className="text-priority-urgent"
+              loading={loading}
             >
               <Trash2 className="h-4 w-4" /> Delete
             </Button>

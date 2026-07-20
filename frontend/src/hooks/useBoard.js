@@ -22,7 +22,7 @@ export const useBoard = (boardId) => {
 
         if (!alive) return;
 
-        setBoard(data.board);
+        setBoard(data.board[0]);
         setColumns(data.columns);
         setTasks(data.tasks);
         setMembers(data.members);

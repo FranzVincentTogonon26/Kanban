@@ -5,17 +5,20 @@ import { emitToBoard, logActivity } from "../realtime/index.js";
 
 export const generateTask = async (req, res, next) => {
   try {
+    console.log(req.body);
+
     const goal = (req.body.goal || "").trim();
     if (!goal) throw ApiError.badRequest("A project goal is required");
 
     const count = Math.min(Math.max(parseInt(req.body.count, 10) || 6, 1), 15);
+
     const suggestions = await Service.generateServiceTask(goal, count);
 
     if (!req.body.column_id) {
       return res.json({ tasks: suggestions, persisted: false });
     }
 
-    const colRes = await AI.getColumn(req.body.column_id, req.board_id);
+    const colRes = await AI.getColumn(req.body.column_id, req.board.id);
     if (!colRes.length)
       throw ApiError.badRequest("Column id does not belong to this board");
 

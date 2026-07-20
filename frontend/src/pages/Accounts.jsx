@@ -95,6 +95,10 @@ const Accounts = () => {
                     <div key={i} className="skeleton h-13 rounded-2xl" />
                   ))}
                 </div>
+              ) : users.length === 0 ? (
+                <p className="px-2 py-8 text-center text-sm font-bold text-muted">
+                  No members yet.
+                </p>
               ) : (
                 <ul className="space-y-1">
                   {users.map((user) => (

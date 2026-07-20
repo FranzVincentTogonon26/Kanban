@@ -26,6 +26,8 @@ import TaskModal from "../components/board/TaskModal";
 // import { aiApi } from "../lib/api";
 import PromptDialog from "../components/ui/PromptDialog";
 import MembersPresenceModal from "../components/board/MembersPresenceModal";
+import AISummaryModal from "../components/ai/AISummaryModal";
+import AIGenerateModal from "../components/ai/AIGenerateModal";
 
 const BoardPage = () => {
   const { boardId } = useParams();
@@ -69,8 +71,6 @@ const BoardPage = () => {
     getBoard.role.toLowerCase() === "owner" ||
     getBoard.role.toLowerCase() === "admin";
 
-  const board = getBoard.board;
-
   const actions = (
     <div className="flex items-center gap-2">
       {getBoard.presence.length > 0 && (
@@ -104,7 +104,7 @@ const BoardPage = () => {
         <FileText className="h-4 w-4" />{" "}
         <span className="hidden lg:inline">Summary</span>
       </Button>
-      <Button
+      {/* <Button
         size="sm"
         onClick={() =>
           setAiGen({ open: true, columnId: getBoard.columns?.[0].id })
@@ -112,7 +112,7 @@ const BoardPage = () => {
       >
         <Sparkles className="h-4 w-4" />{" "}
         <span className="hidden lg:inline">AI tasks</span>
-      </Button>
+      </Button> */}
     </div>
   );
 
@@ -127,21 +127,20 @@ const BoardPage = () => {
             >
               <ChevronLeft className="h-4 w-4" />
             </Link>
-
-            {board ? (
+            {getBoard.board ? (
               <>
                 <span
                   className="h-2.5 w-2.5 rounded-full"
-                  style={{ backgroundColor: board.color }}
+                  style={{ backgroundColor: getBoard.board.color }}
                 />
-                {titleCase(board.title)}
+                {titleCase(getBoard.board.title)}
               </>
             ) : (
               "Loading..."
             )}
           </span>
         }
-        subtitle={board?.description}
+        subtitle={getBoard.board ? getBoard.board.description : ""}
         actions={actions}
         onCreateBoard={openCreateBoard}
       />
@@ -215,7 +214,6 @@ const BoardPage = () => {
             onAddTask={(columnId) =>
               setTaskModal({ open: true, task: null, columnId })
             }
-            onAiGenerate={(columnId) => setAiGen({ open: true, columnId })}
             onAddColumn={() => setAddColumnOpen(true)}
           />
         )}
@@ -238,6 +236,20 @@ const BoardPage = () => {
       <ActivityFeed
         open={activityOpen}
         onClose={() => setActivityOpen(false)}
+        boardId={boardId}
+      />
+
+      <AIGenerateModal
+        open={aiGen.open}
+        onClose={() => setAiGen({ open: false, columnId: null })}
+        boardId={boardId}
+        columns={getBoard.columns}
+        defaultColumnId={aiGen.columnId}
+        onCreated={(tasks) => tasks.forEach(getBoard.upsertTask)}
+      />
+      <AISummaryModal
+        open={summaryOpen}
+        onClose={() => setSummaryOpen(false)}
         boardId={boardId}
       />
 

@@ -26,7 +26,6 @@ const KanbanBoard = ({
   actions,
   onTaskClick,
   onAddTask,
-  onAiGenerate,
   onAddColumn,
 }) => {
   const [activeTask, setActiveTask] = useState(null);
@@ -105,7 +104,6 @@ const KanbanBoard = ({
             tasks={tasksByColumn[col.id] || []}
             onTaskClick={onTaskClick}
             onAddTask={onAddTask}
-            onAiGenerate={onAiGenerate}
             onRename={actions.renameColumn}
             onDelete={actions.deleteColumn}
           />

@@ -1,6 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
 import { useEffect, useRef, useState } from "react";
-import { MoreHorizontal, Pencil, Plus, Sparkles, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -30,7 +30,6 @@ const Column = ({
   onAddTask,
   onRename,
   onDelete,
-  onAiGenerate,
 }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
@@ -107,15 +106,6 @@ const Column = ({
             </button>
             {menuOpen && (
               <div className="card animate-in absolute right-0 z-10 mt-1 w-44 rounded-2xl p-1.5 shadow-[var(--shadow-lift)]">
-                <MenuItem
-                  icon={Sparkles}
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onAiGenerate(column.id);
-                  }}
-                >
-                  Generate with AI
-                </MenuItem>
                 <MenuItem
                   icon={Pencil}
                   onClick={() => {

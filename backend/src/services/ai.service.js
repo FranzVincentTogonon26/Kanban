@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import { ENV } from "../config/env.js";
 import ApiError from "../utils/ApiError.js";
 
-const MODEL = ENV.GIMINI_MODEL || "gemini-2.0-flash";
+const MODEL = ENV.GIMINI_MODEL;
 const VALID_PRIORITIES = ["low", "medium", "high", "urgent"];
 
 let client = null;
@@ -36,29 +36,33 @@ const extractJSON = (text) => {
 
 const runPrompt = async (prompt) => {
   try {
-    const response = await getClient().models.generateContent({
+    const { output_text } = await getClient().interactions.create({
       model: MODEL,
-      contents: prompt,
+      input: prompt,
     });
 
-    return response.text;
+    if (!output_text) {
+      throw new ApiError(502, "Gemini returned an empty response.");
+    }
+    return output_text;
   } catch (err) {
     console.dir(err, { depth: null });
 
     if (err.isApiError) throw err;
 
     const status = err.status || err.statusCode;
-    if (status === 429) {
-      throw new ApiError(
-        429,
-        "AI quota exceeded. Check your Gemini plan/biilling and try again later.",
-      );
-    }
-    if (status === 400 || status === 401 || status === 403) {
-      throw new ApiError(
-        503,
-        "AI request rejected - verify your Gemini_Api_Key is valid.",
-      );
+    switch (status) {
+      case 400:
+        throw new ApiError(502, "Invalid Gemini request.");
+
+      case 401:
+        throw new ApiError(503, "Invalid Gemini API key.");
+
+      case 403:
+        throw new ApiError(503, "Gemini API access denied.");
+
+      case 429:
+        throw new ApiError(429, "Gemini quota exceeded.");
     }
 
     console.error("Gemini request falied:", err.message);
